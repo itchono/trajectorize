@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# cffi generated files
+_*.c
+*.o
+
 # Distribution / packaging
 .Python
 build/
@@ -127,3 +131,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# VS Code
+.vscode/
