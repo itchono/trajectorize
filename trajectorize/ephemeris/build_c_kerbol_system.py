@@ -1,12 +1,13 @@
-from trajectorize.setup_utils.c_parsing import include_dir, read_header_file_and_cleanse_macros
+from trajectorize.setup_utils.c_parsing import (include_dir,
+                                                read_and_cleanse_many_headers)
 from cffi import FFI
 
 ffi = FFI()
 
 
-ffi.cdef(read_header_file_and_cleanse_macros('keplerian_elements.h') +
-         read_header_file_and_cleanse_macros('kerbol_system_types.h') +
-         read_header_file_and_cleanse_macros('kerbol_system_bodies.h'))
+ffi.cdef(read_and_cleanse_many_headers(["keplerian_elements.h",
+                                        "kerbol_system_types.h",
+                                        "kerbol_system_bodies.h"]))
 
 ffi.set_source("trajectorize.ephemeris._c_kerbol_system",
                '''

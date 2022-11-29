@@ -24,5 +24,6 @@ setup(
     setup_requires=["cffi>=1.15.0"],
     cffi_modules=[
         "./trajectorize/ephemeris/build_c_kerbol_system.py:ffi",
+        "./trajectorize/orbit/build_c_kepler_equation_solver.py:ffi",
     ],
 )
