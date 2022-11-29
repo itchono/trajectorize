@@ -10,4 +10,8 @@ trajectorize/orbit/_c_kepler_equation_solver.so: trajectorize/orbit/build_c_kepl
 
 
 clean:
-	rm trajectorize/*.o trajectorize/*.so
+# Remove all .o and .so files under trajectorize/
+# Also remove CFFI generated C files with name like _c_kerbol_system.c
+	find trajectorize/ -name "*.o" -delete
+	find trajectorize/ -name "*.so" -delete
+	find trajectorize/ -name "_c_*.c" -delete
