@@ -30,4 +30,14 @@ typedef struct KeplerianElements
     double true_anomaly;
 } KeplerianElements;
 
+typedef struct UniversalKeplerianElements
+{
+    double alpha;
+    double eccentricity;
+    double inclination;
+    double longitude_of_ascending_node;
+    double argument_of_periapsis;
+    double universal_anomaly;
+} UniversalKeplerianElements;
+
 #endif // TRAJECTORIZE_ORBIT_KEPLERIAN_ELEMENTS_H

@@ -43,6 +43,8 @@ Matrix3 mul_mat(Matrix3 m1, Matrix3 m2);
 
 Vector3 mul_mat_vec(Matrix3 m, Vector3 v);
 
+Vector3 vec_from_double_array(double *arr);
+
 // Comparisons
 bool vec_equal(Vector3 v1, Vector3 v2);
 bool mat_equal(Matrix3 m1, Matrix3 m2);

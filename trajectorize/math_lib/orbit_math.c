@@ -154,6 +154,15 @@ Vector3 mul_mat_vec(Matrix3 m, Vector3 v)
     return result;
 }
 
+Vector3 vec_from_double_array(double *array)
+{
+    Vector3 result;
+    result.x = array[0];
+    result.y = array[1];
+    result.z = array[2];
+    return result;
+}
+
 bool vec_equal(Vector3 v1, Vector3 v2)
 {
     return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z;
