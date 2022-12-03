@@ -1,29 +1,16 @@
-#ifndef _ORBIT_MATH_H
-#define _ORBIT_MATH_H
+/*
+Trajectorize
+
+Math Library
+
+This header file contains a library of math functions.
+*/
+
+#ifndef ORBIT_MATH_H
+#define ORBIT_MATH_H
 
 #include <stdbool.h>
-
-typedef union Vector3
-{
-    struct
-    {
-        double x;
-        double y;
-        double z;
-    };
-    double v[3];
-} Vector3;
-
-typedef union Matrix3
-{
-    struct
-    {
-        double m00, m01, m02;
-        double m10, m11, m12;
-        double m20, m21, m22;
-    };
-    double m[3][3];
-} Matrix3;
+#include "orbit_math_types.h"
 
 double norm(Vector3 v);
 double dot(Vector3 v1, Vector3 v2);
@@ -43,8 +30,6 @@ Matrix3 mul_mat(Matrix3 m1, Matrix3 m2);
 
 Vector3 mul_mat_vec(Matrix3 m, Vector3 v);
 
-Vector3 vec_from_double_array(double *arr);
-
 // Comparisons
 bool vec_equal(Vector3 v1, Vector3 v2);
 bool mat_equal(Matrix3 m1, Matrix3 m2);
@@ -53,4 +38,4 @@ bool mat_equal(Matrix3 m1, Matrix3 m2);
 void print_vec(Vector3 v);
 void print_mat(Matrix3 m);
 
-#endif // _ORBIT_MATH_H_
+#endif // ORBIT_MATH_H_

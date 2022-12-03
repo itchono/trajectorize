@@ -5,8 +5,8 @@ from cffi import FFI
 ffi = FFI()
 
 
-ffi.cdef(read_and_cleanse_many_headers(["orbit_math.h",
-                                        "universal_kepler.h"]))
+ffi.cdef(read_and_cleanse_many_headers("orbit_math_types.h",
+                                       "universal_kepler.h"))
 
 ffi.set_source("trajectorize.orbit._c_universal_kepler",
                '''

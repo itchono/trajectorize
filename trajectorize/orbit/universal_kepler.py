@@ -3,28 +3,31 @@
 from ._c_universal_kepler import ffi, lib
 import numpy as np
 
+
+def _vec3_from_np_array(np_array: np.ndarray) -> ffi.CData:
+    return ffi.new("Vector3*", {"v": np_array.tolist()})[0]
+
+
 class UniversalKeplerOrbit:
-    def __init__(self, position: np.ndarray, velocity: np.ndarray, time: float, mu: float):
+    def __init__(self, position: np.ndarray, velocity: np.ndarray,
+                 time: float, mu: float):
         self.position = position
         self.velocity = velocity
         self.time = time
         self.mu = mu
+
     def propagate(self, dt: float) -> "UniversalKeplerOrbit":
         new_position = np.zeros(3)
         new_velocity = np.zeros(3)
 
-        # Convert to C arrays
-        position_c = ffi.new("double[3]", self.position.tolist())
-        velocity_c = ffi.new("double[3]", self.velocity.tolist())
-
         orbit_c = ffi.new("struct UniversalKeplerOrbit *", {
-            "position": lib.vec_from_double_array(position_c),
-            "velocity": lib.vec_from_double_array(velocity_c),
+            "position": _vec3_from_np_array(self.position),
+            "velocity": _vec3_from_np_array(self.velocity),
             "time": self.time,
             "mu": self.mu
         })
 
-        new_orbit = lib.universalOrbitatTime(self.time + dt, orbit_c[0])
+        new_orbit = lib.orbitAtTime(self.time + dt, orbit_c[0])
 
         for i in range(3):
             new_position[i] = new_orbit.position.v[i]

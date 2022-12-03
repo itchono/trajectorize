@@ -1,4 +1,4 @@
-#include "../../include/orbit_math.h"
+#include "../include/orbit_math.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -151,15 +151,6 @@ Vector3 mul_mat_vec(Matrix3 m, Vector3 v)
     result.x = m.m[0][0] * v.x + m.m[0][1] * v.y + m.m[0][2] * v.z;
     result.y = m.m[1][0] * v.x + m.m[1][1] * v.y + m.m[1][2] * v.z;
     result.z = m.m[2][0] * v.x + m.m[2][1] * v.y + m.m[2][2] * v.z;
-    return result;
-}
-
-Vector3 vec_from_double_array(double *array)
-{
-    Vector3 result;
-    result.x = array[0];
-    result.y = array[1];
-    result.z = array[2];
     return result;
 }
 

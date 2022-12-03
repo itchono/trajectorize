@@ -1,4 +1,4 @@
-#include "../../include/universal_kepler.h"
+#include "../include/universal_kepler.h"
 
 #define ATOL 1e-12
 #define MAX_ITER 50
@@ -111,7 +111,7 @@ LagrangeDerivatives lagrangeFGdot(double t, UniversalKeplerOrbit orbit, double r
     return result;
 }
 
-UniversalKeplerOrbit universalOrbitatTime(double t, UniversalKeplerOrbit orbit) {
+UniversalKeplerOrbit orbitAtTime(double t, UniversalKeplerOrbit orbit) {
     LagrangeCoefficients lc = lagrangeFG(t, orbit);
     Vector3 position = add_vec(mul_scalar_vec(lc.f, orbit.position), mul_scalar_vec(lc.g, orbit.velocity));
     double r_new = norm(position);

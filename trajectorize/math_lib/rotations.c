@@ -1,4 +1,4 @@
-#include "../../include/rotations.h"
+#include "../include/rotations.h"
 
 #include <math.h>
 

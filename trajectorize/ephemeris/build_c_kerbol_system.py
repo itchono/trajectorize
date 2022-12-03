@@ -5,9 +5,9 @@ from cffi import FFI
 ffi = FFI()
 
 
-ffi.cdef(read_and_cleanse_many_headers(["keplerian_elements.h",
-                                        "kerbol_system_types.h",
-                                        "kerbol_system_bodies.h"]))
+ffi.cdef(read_and_cleanse_many_headers("keplerian_elements.h",
+                                       "kerbol_system_types.h",
+                                       "kerbol_system_bodies.h"))
 
 ffi.set_source("trajectorize.ephemeris._c_kerbol_system",
                '''
