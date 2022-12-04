@@ -15,7 +15,7 @@
 // Distances are given wrt center of mass of the body rather than surface
 // This differs from what is reported in-game (wrt equatorial surface)
 
-const BodyParameters Kerbol = {
+const Body Kerbol = {
     .body = KERBOL,
     .parent = KERBOL,
     .mass = 1.7565459e28,
@@ -30,7 +30,7 @@ const BodyParameters Kerbol = {
               .mean_anomaly_at_epoch = 0},
     .soi_radius = INFINITY};
 
-const BodyParameters Moho = {
+const Body Moho = {
     .body = MOHO,
     .parent = KERBOL,
     .mass = 2.5263314e21,
@@ -45,7 +45,7 @@ const BodyParameters Moho = {
               .mean_anomaly_at_epoch = 3.14},
     .soi_radius = 9646663.0};
 
-const BodyParameters Eve = {
+const Body Eve = {
     .body = EVE,
     .parent = KERBOL,
     .mass = 1.2243980e23,
@@ -60,7 +60,7 @@ const BodyParameters Eve = {
               .mean_anomaly_at_epoch = 3.14},
     .soi_radius = 85109365.0};
 
-const BodyParameters Gilly = {
+const Body Gilly = {
     .body = GILLY,
     .parent = EVE,
     .mass = 1.2420363e17,
@@ -75,7 +75,7 @@ const BodyParameters Gilly = {
               .mean_anomaly_at_epoch = 0.9},
     .soi_radius = 126123.27};
 
-const BodyParameters Kerbin = {
+const Body Kerbin = {
     .body = KERBIN,
     .parent = KERBOL,
     .mass = 5.2915158e22,
@@ -90,7 +90,7 @@ const BodyParameters Kerbin = {
               .mean_anomaly_at_epoch = 3.14},
     .soi_radius = 84159286.0};
 
-const BodyParameters Mun = {
+const Body Mun = {
     .body = MUN,
     .parent = KERBIN,
     .mass = 9.7599066e20,
@@ -105,7 +105,7 @@ const BodyParameters Mun = {
               .mean_anomaly_at_epoch = 1.7},
     .soi_radius = 2429559.1};
 
-const BodyParameters Minmus = {
+const Body Minmus = {
     .body = MINMUS,
     .parent = KERBIN,
     .mass = 2.6457580e19,
@@ -120,7 +120,7 @@ const BodyParameters Minmus = {
               .mean_anomaly_at_epoch = 0.9},
     .soi_radius = 2247428.4};
 
-const BodyParameters Duna = {
+const Body Duna = {
     .body = DUNA,
     .parent = KERBOL,
     .mass = 4.5154270e21,
@@ -135,7 +135,7 @@ const BodyParameters Duna = {
               .mean_anomaly_at_epoch = 3.14},
     .soi_radius = 47921949.0};
 
-const BodyParameters Ike = {
+const Body Ike = {
     .body = IKE,
     .parent = DUNA,
     .mass = 2.7821615e20,
@@ -150,7 +150,7 @@ const BodyParameters Ike = {
               .mean_anomaly_at_epoch = 1.7},
     .soi_radius = 1049598.9};
 
-const BodyParameters Dres = {
+const Body Dres = {
     .body = DRES,
     .parent = KERBOL,
     .mass = 3.2190937e20,
@@ -165,7 +165,7 @@ const BodyParameters Dres = {
               .mean_anomaly_at_epoch = 3.14},
     .soi_radius = 32832840};
 
-const BodyParameters Jool = {
+const Body Jool = {
     .body = JOOL,
     .parent = KERBOL,
     .mass = 4.2332127e24,
@@ -180,7 +180,7 @@ const BodyParameters Jool = {
               .mean_anomaly_at_epoch = 0.1},
     .soi_radius = 2.4559852e9};
 
-const BodyParameters Laythe = {
+const Body Laythe = {
     .body = LAYTHE,
     .parent = JOOL,
     .mass = 2.9397311e22,
@@ -195,7 +195,7 @@ const BodyParameters Laythe = {
               .mean_anomaly_at_epoch = 3.14},
     .soi_radius = 3723645.8};
 
-const BodyParameters Vall = {
+const Body Vall = {
     .body = VALL,
     .parent = JOOL,
     .mass = 3.1087655e21,
@@ -210,7 +210,7 @@ const BodyParameters Vall = {
               .mean_anomaly_at_epoch = 0.9},
     .soi_radius = 2406401.4};
 
-const BodyParameters Tylo = {
+const Body Tylo = {
     .body = TYLO,
     .parent = JOOL,
     .mass = 4.2332127e22,
@@ -225,7 +225,7 @@ const BodyParameters Tylo = {
               .mean_anomaly_at_epoch = 3.14},
     .soi_radius = 10856518};
 
-const BodyParameters Bop = {
+const Body Bop = {
     .body = BOP,
     .parent = JOOL,
     .mass = 3.7261090e19,
@@ -240,7 +240,7 @@ const BodyParameters Bop = {
               .mean_anomaly_at_epoch = 0.9},
     .soi_radius = 1221060.9};
 
-const BodyParameters Pol = {
+const Body Pol = {
     .body = POL,
     .parent = JOOL,
     .mass = 1.0813507e19,
@@ -255,7 +255,7 @@ const BodyParameters Pol = {
               .mean_anomaly_at_epoch = 0.9},
     .soi_radius = 1042138.9};
 
-const BodyParameters Eeloo = {
+const Body Eeloo = {
     .body = EELOO,
     .parent = KERBOL,
     .mass = 1.1149224e21,

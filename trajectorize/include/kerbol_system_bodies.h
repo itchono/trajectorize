@@ -11,22 +11,22 @@ This header file contains information for bodies in the Kerbol system.
 
 #include "kerbol_system_types.h"
 
-extern const BodyParameters Kerbol;
-extern const BodyParameters Moho;
-extern const BodyParameters Eve;
-extern const BodyParameters Gilly;
-extern const BodyParameters Kerbin;
-extern const BodyParameters Mun;
-extern const BodyParameters Minmus;
-extern const BodyParameters Duna;
-extern const BodyParameters Ike;
-extern const BodyParameters Dres;
-extern const BodyParameters Jool;
-extern const BodyParameters Laythe;
-extern const BodyParameters Vall;
-extern const BodyParameters Tylo;
-extern const BodyParameters Bop;
-extern const BodyParameters Pol;
-extern const BodyParameters Eeloo;
+extern const Body Kerbol;
+extern const Body Moho;
+extern const Body Eve;
+extern const Body Gilly;
+extern const Body Kerbin;
+extern const Body Mun;
+extern const Body Minmus;
+extern const Body Duna;
+extern const Body Ike;
+extern const Body Dres;
+extern const Body Jool;
+extern const Body Laythe;
+extern const Body Vall;
+extern const Body Tylo;
+extern const Body Bop;
+extern const Body Pol;
+extern const Body Eeloo;
 
 #endif // TRAJECTORIZE_EPHEMERIS_KERBOL_SYSTEM_BODIES_H

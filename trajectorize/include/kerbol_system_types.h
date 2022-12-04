@@ -8,9 +8,9 @@ This file contains type definitions for the Kerbol system bodies.
 
 #ifndef TRAJECTORIZE_EPHEMERIS_KERBOL_SYSTEM_TYPES_H
 #define TRAJECTORIZE_EPHEMERIS_KERBOL_SYSTEM_TYPES_H
-#include "keplerian_elements.h"
+#include "planetary_keplerian_elements.h"
 
-enum KerbolSystemBody
+enum BodyEnum
 {
     KERBOL,
     MOHO,
@@ -28,19 +28,19 @@ enum KerbolSystemBody
     TYLO,
     BOP,
     POL,
-    EELOO
+    EELOO,
 };
 
-typedef struct BodyParameters
+typedef struct Body
 {
-    enum KerbolSystemBody body;
-    enum KerbolSystemBody parent;
+    enum BodyEnum body;
+    enum BodyEnum parent;
     double mass;
     double mu;
     double radius;
     double atmosphere_height;
     PlanetaryKeplerianElements orbit;
     double soi_radius;
-} BodyParameters;
+} Body;
 
 #endif // TRAJECTORIZE_EPHEMERIS_KERBOL_SYSTEM_TYPES_H

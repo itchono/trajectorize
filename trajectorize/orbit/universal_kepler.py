@@ -16,6 +16,9 @@ class UniversalKeplerOrbit:
         self.time = time
         self.mu = mu
 
+    def __repr__(self) -> str:
+        return f"UniversalKeplerOrbit(position={self.position}, velocity={self.velocity}, time={self.time}, mu={self.mu})"
+
     def propagate(self, dt: float) -> "UniversalKeplerOrbit":
         new_position = np.zeros(3)
         new_velocity = np.zeros(3)

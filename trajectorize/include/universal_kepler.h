@@ -10,7 +10,6 @@ This header file contains definitions for the Universal Keplerian Orbit
 #define UNIVERSAL_KEPLER_H
 
 #include "orbit_math.h"
-#include "keplerian_elements.h"
 
 typedef struct UniversalKeplerOrbit {
     Vector3 position;

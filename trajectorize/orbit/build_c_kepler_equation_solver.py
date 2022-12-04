@@ -15,4 +15,4 @@ ffi.set_source("trajectorize.orbit._c_kepler_equation_solver",
                include_dirs=[include_dir])
 
 if __name__ == "__main__":
-    ffi.compile()
+    ffi.compile(verbose=True)

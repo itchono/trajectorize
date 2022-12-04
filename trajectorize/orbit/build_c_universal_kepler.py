@@ -5,12 +5,15 @@ from cffi import FFI
 ffi = FFI()
 
 
-ffi.cdef(read_and_cleanse_many_headers("orbit_math_types.h",
+ffi.cdef(read_and_cleanse_many_headers("planetary_keplerian_elements.h",
+                                       "kerbol_system_types.h",
+                                       "orbit_math_types.h",
                                        "universal_kepler.h"))
 
 ffi.set_source("trajectorize.orbit._c_universal_kepler",
                '''
-               #include "orbit_math.h"
+               #include "kerbol_system_types.h"
+               #include "orbit_math_types.h"
                #include "universal_kepler.h"
                ''',
                sources=["trajectorize/orbit/universal_kepler.c",
@@ -18,4 +21,4 @@ ffi.set_source("trajectorize.orbit._c_universal_kepler",
                include_dirs=[include_dir])
 
 if __name__ == "__main__":
-    ffi.compile()
+    ffi.compile(verbose=True)
