@@ -1,6 +1,6 @@
 import os
 
-include_dir = os.path.join(os.path.dirname(__file__), '../include')
+include_dir = os.path.join(os.path.dirname(__file__), '../../include')
 
 
 def read_and_cleanse_header(filename: str) -> str:

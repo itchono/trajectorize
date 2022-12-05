@@ -1,4 +1,4 @@
-#include "../include/kerbol_system_bodies.h"
+#include "../../include/kerbol_system_bodies.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
