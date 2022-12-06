@@ -1,5 +1,5 @@
 # Wrapper for C code
-from ._c_kepler_equation_solver import ffi, lib
+from ._c_conic_kepler import ffi, lib
 
 
 def solve_kepler_equation(M: float, e: float) -> float:

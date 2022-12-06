@@ -8,7 +8,7 @@ This file contains type definitions for the Kerbol system bodies.
 
 #ifndef TRAJECTORIZE_EPHEMERIS_KERBOL_SYSTEM_TYPES_H
 #define TRAJECTORIZE_EPHEMERIS_KERBOL_SYSTEM_TYPES_H
-#include "planetary_keplerian_elements.h"
+#include "keplerian_elements.h"
 
 enum BodyEnum
 {

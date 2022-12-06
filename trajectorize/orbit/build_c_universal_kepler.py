@@ -5,9 +5,9 @@ from cffi import FFI
 ffi = FFI()
 
 
-ffi.cdef(read_and_cleanse_many_headers("planetary_keplerian_elements.h",
-                                       "kerbol_system_types.h",
+ffi.cdef(read_and_cleanse_many_headers("keplerian_elements.h",
                                        "orbit_math_types.h",
+                                       "state_vector_types.h",
                                        "universal_kepler.h"))
 
 ffi.set_source("trajectorize.orbit._c_universal_kepler",

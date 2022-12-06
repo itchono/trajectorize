@@ -23,14 +23,13 @@ class UniversalKeplerOrbit:
         new_position = np.zeros(3)
         new_velocity = np.zeros(3)
 
-        orbit_c = ffi.new("struct UniversalKeplerOrbit *", {
+        orbit_c = ffi.new("struct StateVector *", {
             "position": _vec3_from_np_array(self.position),
             "velocity": _vec3_from_np_array(self.velocity),
-            "time": self.time,
-            "mu": self.mu
+            "time": self.time
         })
 
-        new_orbit = lib.orbitAtTime(self.time + dt, orbit_c[0])
+        new_orbit = lib.orbitAtTime(self.time + dt, orbit_c[0], self.mu)
 
         for i in range(3):
             new_position[i] = new_orbit.position.v[i]

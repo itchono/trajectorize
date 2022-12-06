@@ -5,7 +5,7 @@ from cffi import FFI
 ffi = FFI()
 
 
-ffi.cdef(read_and_cleanse_many_headers("planetary_keplerian_elements.h",
+ffi.cdef(read_and_cleanse_many_headers("keplerian_elements.h",
                                        "kerbol_system_types.h",
                                        "kerbol_system_bodies.h"))
 
