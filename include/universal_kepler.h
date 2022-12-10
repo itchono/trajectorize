@@ -11,9 +11,6 @@ This header file contains definitions for the Universal Keplerian Orbit
 
 #include "state_vector_types.h"
 
-double stumpS(double z);
-double stumpC(double z);
-
 double universalAnomaly(double t, StateVector orbit, double mu);
 StateVector orbitAtTime(double t, StateVector orbit, double mu);
 

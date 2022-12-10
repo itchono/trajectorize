@@ -35,7 +35,7 @@ setup(
                    "Intended Audience :: Science/Research"],
     cffi_modules=[
         "./trajectorize/ephemeris/build_c_kerbol_system.py:ffi",
-        "./trajectorize/orbit/build_c_kepler_equation_solver.py:ffi",
+        "./trajectorize/orbit/build_c_conic_kepler.py:ffi",
         "./trajectorize/orbit/build_c_universal_kepler.py:ffi",
     ],
 )

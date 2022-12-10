@@ -1,4 +1,4 @@
-#include "../../include/conic_kepler.h"
+#include "conic_kepler.h"
 
 // Path: trajectorize/orbit/conic_kepler.c
 

@@ -1,4 +1,4 @@
-#include "../../include/orbit_math.h"
+#include "orbit_math.h"
 
 #include <math.h>
 #include <stdio.h>
