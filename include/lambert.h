@@ -19,7 +19,12 @@ typedef struct LambertSolution {
 
 // Lambert's Problem
 
-LambertSolution lambert(Vector3 r1, Vector3 r2, double dt, double mu);
+enum TrajectoryType {
+    PROGRADE,
+    RETROGRADE
+};
+
+LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum TrajectoryType type);
 
 
 #endif // LAMBERT_H
