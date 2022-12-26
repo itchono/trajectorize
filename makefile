@@ -1,6 +1,8 @@
-trajectorize/_c_extension.so: trajectorize/setup_utils/build_c_extension.py
+trajectorize/_c_extension.so: trajectorize/c_ext_utils/build_c_extension.py
 	python $<
 
+autoformat:
+	autopep8 --in-place --recursive --aggressive --aggressive trajectorize/ -v
 
 clean:
 # Remove all .o and .so files under trajectorize/

@@ -4,6 +4,14 @@
 
 #define _USE_MATH_DEFINES // for M_PI
 #include <math.h>
+
+#ifndef M_PI
+// This macro is here for when the linter doesn't see M_PI defined from math.h
+#define M_PI 3.14159265358979323846
+#endif // M_PI
+
+#include <stdlib.h>
+
 #include "orbit_math.h"
 #include "rotations.h"
 
@@ -56,6 +64,30 @@ StateVector stateVectorFromOrbit(KeplerianElements orbit, double mu)
         orbit.epoch};
 
     return state_vector;
+}
+
+StateVectorArray stateVectorLocus(KeplerianElements orbit, double mu, int n)
+{
+    StateVectorArray state_vector_array = {
+        .n = n,
+        .states = malloc(n * sizeof(StateVector)),
+        .mem_buffer = malloc(n * 7 * sizeof(double))};
+
+    double d_theta = 2 * M_PI / n;
+    for (int i = 0; i < n; i++)
+    {
+        double theta = i * d_theta;
+        KeplerianElements orbit_i = {
+            .semi_major_axis = orbit.semi_major_axis,
+            .eccentricity = orbit.eccentricity,
+            .inclination = orbit.inclination,
+            .longitude_of_ascending_node = orbit.longitude_of_ascending_node,
+            .argument_of_periapsis = orbit.argument_of_periapsis,
+            .true_anomaly = theta,
+            .epoch = orbit.epoch};
+        state_vector_array.states[i] = stateVectorFromOrbit(orbit_i, mu);
+    }
+    return state_vector_array;
 }
 
 KeplerianElements orbitFromStateVector(StateVector state_vector, double mu)

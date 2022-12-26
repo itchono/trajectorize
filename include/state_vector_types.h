@@ -18,4 +18,15 @@ typedef struct StateVector
     double time;
 } StateVector;
 
+typedef struct StateVectorArray
+{
+    int n;
+    StateVector *states;
+    double *mem_buffer;
+    // stores underlying states as a (N x 7) matrix, which can be
+    // re-interpreted as a set of StateVectors
+} StateVectorArray;
+
+void freeStateVectorArray(StateVectorArray sva);
+
 #endif // STATE_VECTOR_TYPES_H

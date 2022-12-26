@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from trajectorize.orbit.universal_kepler import UniversalKeplerOrbit
+from time import perf_counter
 
 if __name__ == "__main__":
     r0 = np.array([7000, -12124, 0])
@@ -11,13 +12,12 @@ if __name__ == "__main__":
 
     t = np.linspace(0, 34000, 1000)
 
-    r = np.zeros((len(t), 3))
-    v = np.zeros((len(t), 3))
+    start = perf_counter()
 
-    for i, t_i in enumerate(t):
-        orb = demo_orbit.propagate(t_i)
-        r[i] = orb.position
-        v[i] = orb.velocity
+    orb = demo_orbit.propagate_vec(t)
+
+    r = orb.position
+    v = orb.velocity
 
     fig = plt.figure(figsize=(12, 5), tight_layout=True)
 
@@ -64,4 +64,3 @@ if __name__ == "__main__":
         print("Non-GUI backend detected. Plot saved to orbit.png")
     else:
         plt.show()
-    

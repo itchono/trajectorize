@@ -2,6 +2,7 @@
 #include "orbit_math.h"
 #include "stumpuff_functions.h"
 #include <math.h>
+#include <stdlib.h>
 
 #define ATOL 1e-12
 #define MAX_ITER 50
@@ -109,4 +110,35 @@ StateVector orbitAtTime(double t, StateVector orbit, double mu)
     result.velocity = velocity;
     result.time = t;
     return result;
+}
+
+StateVectorArray orbitAtManyTimes(int n, double times[n], StateVector orbit, double mu)
+// RETURNS HEAP ALLOCATED MEMORY; CALLER MUST FREE
+{
+    // We're gonna do some hacker shit here
+    // a (Nx7) double [56 bytes] is equivalent to a (N) StateVector [also 56 bytes]
+    // so we're gonna allocate a (N) StateVector array,
+    // and then cast it to a (Nx7) double array later
+    StateVector *mem_buffer = (StateVector *)malloc(n * sizeof(StateVector));
+    // Format: x, y, z, vx, vy, vz, t
+
+    for (int i = 0; i < n; i++)
+    {
+        StateVector state = orbitAtTime(times[i], orbit, mu);
+        mem_buffer[i] = state;
+    }
+
+    StateVectorArray result;
+    // Cast the pointer to a (Nx7) double array
+    result.mem_buffer = (double *)mem_buffer; // C is so crazy lol
+    result.n = n;
+    result.states = mem_buffer;
+
+    return result;
+}
+
+void freeStateVectorArray(StateVectorArray sva)
+// TODO: This lives here for now, but should be moved to a separate file
+{
+    free(sva.mem_buffer);
 }

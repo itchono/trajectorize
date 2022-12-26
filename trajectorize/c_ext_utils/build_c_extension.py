@@ -2,6 +2,7 @@ from cffi import FFI
 
 from trajectorize.c_ext_utils.c_parsing import (include_dir,
                                                 read_and_cleanse_many_headers)
+from sys import platform
 
 ffi = FFI()
 
@@ -25,6 +26,25 @@ ffi.cdef(read_and_cleanse_many_headers("orbit_math_types.h",
                                        "universal_kepler.h",
                                        "lambert.h"))
 
+'''
+Determine compiler flags and linker args depending on platform.
+
+GCC options
+-std=c99: Use C99 standard
+-lm: Link math library
+-lc: Link C standard library
+
+MSVC options
+
+
+Compiler type is determined by the value of sys.platform.
+'''
+if platform == "linux" or platform == "linux2":
+    # linux
+    extra_compile_args = ["-std=c99", "-lm", "-lc"]
+else:
+    extra_compile_args = []
+
 # Include only the top-level header files.
 ffi.set_source("trajectorize._c_extension",
                '''
@@ -42,7 +62,9 @@ ffi.set_source("trajectorize._c_extension",
                         "trajectorize/orbit/conic_kepler.c",
                         "trajectorize/orbit/universal_kepler.c",
                         "trajectorize/trajectory/lambert.c"],
-               include_dirs=[include_dir])
+               include_dirs=[include_dir],
+               extra_compile_args=extra_compile_args)
 
 if __name__ == "__main__":
+    # For debug building
     ffi.compile(verbose=True)

@@ -2,7 +2,14 @@
 #include "conic_kepler.h"
 #include "kerbol_system_bodies.h"
 #include "orbit_math.h"
+
+#define _USE_MATH_DEFINES
 #include <math.h>
+
+#ifndef M_PI
+// This macro is here for when the linter doesn't see M_PI defined from math.h
+#define M_PI 3.14159265358979323846
+#endif // M_PI
 
 KeplerianElements ke_from_pke(PlanetaryKeplerianElements pke, double t, double mu)
 {

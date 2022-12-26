@@ -19,4 +19,5 @@ def read_and_cleanse_many_headers(*filenames: str) -> str:
     Utility function for reading and cleansing multiple header files,
     joining them into a single string suitable for cffi.cdef().
     '''
-    return ''.join([read_and_cleanse_header(filename) for filename in filenames])
+    return ''.join([read_and_cleanse_header(filename)
+                   for filename in filenames])

@@ -94,20 +94,21 @@ class Body:
         return f"Body({self.name})"
 
     def __str__(self):
-        return (f"Body: {self.name}\n"
-                f"Parent: {KerbolSystemBodyEnum(self.parent_id).name}\n"
-                f"Mass: {self.mass} kg\n"
-                f"Mu: {self.mu} m^3/s^2\n"
-                f"Radius: {self.radius} m\n"
-                f"Atmosphere Height: {self.atmosphere_height} m\n"
-                f"Orbit:\n\t"
-                f"Semi-major Axis: {self.orbit.semi_major_axis} m\n\t"
-                f"Eccentricity: {self.orbit.eccentricity}\n\t"
-                f"Inclination: {self.orbit.inclination} rad\n\t"
-                f"Longitude of the Ascending Node: {self.orbit.longitude_of_the_ascending_node} rad\n\t"
-                f"Argument of Periapsis: {self.orbit.argument_of_periapsis} rad\n\t"
-                f"Mean Anomaly at Epoch: {self.orbit.mean_anomaly_at_epoch} rad\n\t"
-                f"SOI Radius: {self.soi_radius} m")
+        return (
+            f"Body: {self.name}\n"
+            f"Parent: {KerbolSystemBodyEnum(self.parent_id).name}\n"
+            f"Mass: {self.mass} kg\n"
+            f"Mu: {self.mu} m^3/s^2\n"
+            f"Radius: {self.radius} m\n"
+            f"Atmosphere Height: {self.atmosphere_height} m\n"
+            f"Orbit:\n\t"
+            f"Semi-major Axis: {self.orbit.semi_major_axis} m\n\t"
+            f"Eccentricity: {self.orbit.eccentricity}\n\t"
+            f"Inclination: {self.orbit.inclination} rad\n\t"
+            f"Longitude of the Ascending Node: {self.orbit.longitude_of_the_ascending_node} rad\n\t"
+            f"Argument of Periapsis: {self.orbit.argument_of_periapsis} rad\n\t"
+            f"Mean Anomaly at Epoch: {self.orbit.mean_anomaly_at_epoch} rad\n\t"
+            f"SOI Radius: {self.soi_radius} m")
 
     @classmethod
     def from_name(cls, name: str):
