@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
-from trajectorize.orbit.universal_kepler import UniversalKeplerOrbit
 import numpy as np
 
+from trajectorize.orbit.universal_kepler import UniversalKeplerOrbit
 
 if __name__ == "__main__":
     r0 = np.array([7000, -12124, 0])

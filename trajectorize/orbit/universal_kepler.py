@@ -1,31 +1,27 @@
 # Wrapper for C code
 
-from ._c_universal_kepler import ffi, lib
+from dataclasses import dataclass
+
 import numpy as np
 
+from trajectorize._c_extension import ffi, lib
+from trajectorize.math_lib.math_interfaces import vec3_from_np_array
 
-def _vec3_from_np_array(np_array: np.ndarray) -> ffi.CData:
-    return ffi.new("Vector3*", {"v": np_array.tolist()})[0]
 
-
+@dataclass
 class UniversalKeplerOrbit:
-    def __init__(self, position: np.ndarray, velocity: np.ndarray,
-                 time: float, mu: float):
-        self.position = position
-        self.velocity = velocity
-        self.time = time
-        self.mu = mu
-
-    def __repr__(self) -> str:
-        return f"UniversalKeplerOrbit(position={self.position}, velocity={self.velocity}, time={self.time}, mu={self.mu})"
+    position: np.ndarray
+    velocity: np.ndarray
+    time: float
+    mu: float
 
     def propagate(self, dt: float) -> "UniversalKeplerOrbit":
         new_position = np.zeros(3)
         new_velocity = np.zeros(3)
 
         orbit_c = ffi.new("struct StateVector *", {
-            "position": _vec3_from_np_array(self.position),
-            "velocity": _vec3_from_np_array(self.velocity),
+            "position": vec3_from_np_array(self.position),
+            "velocity": vec3_from_np_array(self.velocity),
             "time": self.time
         })
 

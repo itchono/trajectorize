@@ -6,9 +6,9 @@ KSP Kerbol System Types
 This file contains type definitions for the Kerbol system bodies.
 */
 
-#ifndef TRAJECTORIZE_EPHEMERIS_KERBOL_SYSTEM_TYPES_H
-#define TRAJECTORIZE_EPHEMERIS_KERBOL_SYSTEM_TYPES_H
-#include "keplerian_elements.h"
+#ifndef EPHEMERIS_KERBOL_SYSTEM_TYPES_H
+#define EPHEMERIS_KERBOL_SYSTEM_TYPES_H
+#include "keplerian_element_types.h"
 
 enum BodyEnum
 {
@@ -33,8 +33,8 @@ enum BodyEnum
 
 typedef struct Body
 {
-    enum BodyEnum body;
-    enum BodyEnum parent;
+    enum BodyEnum body_id;
+    enum BodyEnum parent_id;
     double mass;
     double mu;
     double radius;
@@ -43,4 +43,4 @@ typedef struct Body
     double soi_radius;
 } Body;
 
-#endif // TRAJECTORIZE_EPHEMERIS_KERBOL_SYSTEM_TYPES_H
+#endif // EPHEMERIS_KERBOL_SYSTEM_TYPES_H

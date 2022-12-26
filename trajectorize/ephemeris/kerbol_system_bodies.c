@@ -6,7 +6,7 @@
 #ifndef M_PI
 // This macro is here for when the linter doesn't see M_PI defined from math.h
 #define M_PI 3.14159265358979323846
-#endif
+#endif // M_PI
 
 #define RADIANS(degrees) ((degrees)*M_PI / 180.0)
 
@@ -16,8 +16,8 @@
 // This differs from what is reported in-game (wrt equatorial surface)
 
 const Body Kerbol = {
-    .body = KERBOL,
-    .parent = KERBOL,
+    .body_id = KERBOL,
+    .parent_id = KERBOL,
     .mass = 1.7565459e28,
     .mu = 1.1723328e18,
     .radius = 261600000,
@@ -31,8 +31,8 @@ const Body Kerbol = {
     .soi_radius = INFINITY};
 
 const Body Moho = {
-    .body = MOHO,
-    .parent = KERBOL,
+    .body_id = MOHO,
+    .parent_id = KERBOL,
     .mass = 2.5263314e21,
     .mu = 1.6860938e11,
     .radius = 250000,
@@ -46,8 +46,8 @@ const Body Moho = {
     .soi_radius = 9646663.0};
 
 const Body Eve = {
-    .body = EVE,
-    .parent = KERBOL,
+    .body_id = EVE,
+    .parent_id = KERBOL,
     .mass = 1.2243980e23,
     .mu = 8.1717302e12,
     .radius = 700000,
@@ -61,8 +61,8 @@ const Body Eve = {
     .soi_radius = 85109365.0};
 
 const Body Gilly = {
-    .body = GILLY,
-    .parent = EVE,
+    .body_id = GILLY,
+    .parent_id = EVE,
     .mass = 1.2420363e17,
     .mu = 8289449.8,
     .radius = 13000,
@@ -76,8 +76,8 @@ const Body Gilly = {
     .soi_radius = 126123.27};
 
 const Body Kerbin = {
-    .body = KERBIN,
-    .parent = KERBOL,
+    .body_id = KERBIN,
+    .parent_id = KERBOL,
     .mass = 5.2915158e22,
     .mu = 3.5316000e12,
     .radius = 600000,
@@ -91,8 +91,8 @@ const Body Kerbin = {
     .soi_radius = 84159286.0};
 
 const Body Mun = {
-    .body = MUN,
-    .parent = KERBIN,
+    .body_id = MUN,
+    .parent_id = KERBIN,
     .mass = 9.7599066e20,
     .mu = 6.5138398e10,
     .radius = 200000,
@@ -106,8 +106,8 @@ const Body Mun = {
     .soi_radius = 2429559.1};
 
 const Body Minmus = {
-    .body = MINMUS,
-    .parent = KERBIN,
+    .body_id = MINMUS,
+    .parent_id = KERBIN,
     .mass = 2.6457580e19,
     .mu = 1.7658000e9,
     .radius = 60000,
@@ -121,8 +121,8 @@ const Body Minmus = {
     .soi_radius = 2247428.4};
 
 const Body Duna = {
-    .body = DUNA,
-    .parent = KERBOL,
+    .body_id = DUNA,
+    .parent_id = KERBOL,
     .mass = 4.5154270e21,
     .mu = 3.0136321e11,
     .radius = 320000,
@@ -136,8 +136,8 @@ const Body Duna = {
     .soi_radius = 47921949.0};
 
 const Body Ike = {
-    .body = IKE,
-    .parent = DUNA,
+    .body_id = IKE,
+    .parent_id = DUNA,
     .mass = 2.7821615e20,
     .mu = 1.8568369e10,
     .radius = 130000,
@@ -151,8 +151,8 @@ const Body Ike = {
     .soi_radius = 1049598.9};
 
 const Body Dres = {
-    .body = DRES,
-    .parent = KERBOL,
+    .body_id = DRES,
+    .parent_id = KERBOL,
     .mass = 3.2190937e20,
     .mu = 2.1484489e10,
     .radius = 138000,
@@ -166,8 +166,8 @@ const Body Dres = {
     .soi_radius = 32832840};
 
 const Body Jool = {
-    .body = JOOL,
-    .parent = KERBOL,
+    .body_id = JOOL,
+    .parent_id = KERBOL,
     .mass = 4.2332127e24,
     .mu = 2.8252800e14,
     .radius = 6000000,
@@ -181,8 +181,8 @@ const Body Jool = {
     .soi_radius = 2.4559852e9};
 
 const Body Laythe = {
-    .body = LAYTHE,
-    .parent = JOOL,
+    .body_id = LAYTHE,
+    .parent_id = JOOL,
     .mass = 2.9397311e22,
     .mu = 1.9620000e12,
     .radius = 500000,
@@ -196,8 +196,8 @@ const Body Laythe = {
     .soi_radius = 3723645.8};
 
 const Body Vall = {
-    .body = VALL,
-    .parent = JOOL,
+    .body_id = VALL,
+    .parent_id = JOOL,
     .mass = 3.1087655e21,
     .mu = 2.0748150e11,
     .radius = 300000,
@@ -211,8 +211,8 @@ const Body Vall = {
     .soi_radius = 2406401.4};
 
 const Body Tylo = {
-    .body = TYLO,
-    .parent = JOOL,
+    .body_id = TYLO,
+    .parent_id = JOOL,
     .mass = 4.2332127e22,
     .mu = 2.8252800e12,
     .radius = 600000,
@@ -226,8 +226,8 @@ const Body Tylo = {
     .soi_radius = 10856518};
 
 const Body Bop = {
-    .body = BOP,
-    .parent = JOOL,
+    .body_id = BOP,
+    .parent_id = JOOL,
     .mass = 3.7261090e19,
     .mu = 2.4868349e9,
     .radius = 65000,
@@ -241,8 +241,8 @@ const Body Bop = {
     .soi_radius = 1221060.9};
 
 const Body Pol = {
-    .body = POL,
-    .parent = JOOL,
+    .body_id = POL,
+    .parent_id = JOOL,
     .mass = 1.0813507e19,
     .mu = 7.2170208e8,
     .radius = 44000,
@@ -256,8 +256,8 @@ const Body Pol = {
     .soi_radius = 1042138.9};
 
 const Body Eeloo = {
-    .body = EELOO,
-    .parent = KERBOL,
+    .body_id = EELOO,
+    .parent_id = KERBOL,
     .mass = 1.1149224e21,
     .mu = 7.4410815e10,
     .radius = 210000,
@@ -269,3 +269,7 @@ const Body Eeloo = {
               .argument_of_periapsis = RADIANS(260),
               .mean_anomaly_at_epoch = 3.14},
     .soi_radius = 1.1908294e8};
+
+const Body bodies_list[] = {Kerbol, Moho, Eve, Gilly, Kerbin,
+                            Mun, Minmus, Duna, Ike, Dres, Jool,
+                            Laythe, Vall, Tylo, Bop, Pol, Eeloo};

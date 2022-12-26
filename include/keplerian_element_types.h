@@ -6,8 +6,8 @@ Keplerian Elements Struct
 This header file contains a struct for storing Keplerian elements.
 */
 
-#ifndef TRAJECTORIZE_ORBIT_KEPLERIAN_ELEMENTS_H
-#define TRAJECTORIZE_ORBIT_KEPLERIAN_ELEMENTS_H
+#ifndef KEPLERIAN_ELEMENT_TYPES_H
+#define KEPLERIAN_ELEMENT_TYPES_H
 
 typedef struct KeplerianElements
 {
@@ -31,4 +31,4 @@ typedef struct PlanetaryKeplerianElements
     double mean_anomaly_at_epoch;
 } PlanetaryKeplerianElements;
 
-#endif // TRAJECTORIZE_ORBIT_KEPLERIAN_ELEMENTS_H
+#endif // KEPLERIAN_ELEMENT_TYPES_H

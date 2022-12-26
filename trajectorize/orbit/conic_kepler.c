@@ -89,7 +89,6 @@ KeplerianElements orbitFromStateVector(StateVector state_vector, double mu)
     if (dot(state_vector.position, state_vector.velocity) < 0)
         E = 2 * M_PI - E;
 
-    double M = E - e * sin(E);
     double nu = acos((cos(E) - e) / (1 - e * cos(E)));
     if (E > M_PI)
         nu = 2 * M_PI - nu;
@@ -106,4 +105,14 @@ KeplerianElements orbitFromStateVector(StateVector state_vector, double mu)
         state_vector.time};
 
     return orbit;
+}
+
+double orbital_period(double semi_major_axis, double mu)
+{
+    return 2 * M_PI / sqrt(mu) * pow(semi_major_axis, 1.5);
+}
+
+double theta_from_E(double E, double e)
+{
+    return 2 * atan(sqrt((1 + e) / (1 - e)) * tan(E / 2));
 }

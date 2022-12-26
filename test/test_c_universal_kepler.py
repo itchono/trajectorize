@@ -1,6 +1,7 @@
-from trajectorize.orbit.universal_kepler import UniversalKeplerOrbit
-from trajectorize.ephemeris.kerbol_system import Body
 import numpy as np
+
+from trajectorize.ephemeris.kerbol_system import Body
+from trajectorize.orbit.universal_kepler import UniversalKeplerOrbit
 
 
 def test_universal_kepler():

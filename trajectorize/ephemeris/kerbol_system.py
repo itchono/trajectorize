@@ -1,10 +1,14 @@
 # Wrapper for C code
-from ._c_kerbol_system import ffi, lib
 from enum import IntEnum
+
+from trajectorize._c_extension import ffi, lib
+from trajectorize.ephemeris.state_vector import StateVector
 
 # Path: trajectorize/ephemeris/kerbol_system_bodies.c
 
 # Enums
+
+
 class KerbolSystemBodyEnum(IntEnum):
     KERBOL = lib.KERBOL
     MOHO = lib.MOHO
@@ -25,6 +29,8 @@ class KerbolSystemBodyEnum(IntEnum):
     EELOO = lib.EELOO
 
 # Planets
+
+
 class Body:
     def __init__(self, body_id: KerbolSystemBodyEnum):
         body_dict = {
@@ -54,20 +60,20 @@ class Body:
 
     @property
     def body(self):
-        return self._body.body
+        return self._body.body_id
 
     @property
     def parent(self):
-        return self._body.parent.body
+        return self._body.parent_id.body_id
 
     @property
     def mass(self):
         return self._body.mass
-    
+
     @property
     def mu(self):
         return self._body.mu
-    
+
     @property
     def radius(self):
         return self._body.radius
@@ -83,13 +89,13 @@ class Body:
     @property
     def soi_radius(self):
         return self._body.soi_radius
-        
+
     def __repr__(self):
         return f"Body({self.name})"
 
     def __str__(self):
         return (f"Body: {self.name}\n"
-                f"Parent: {KerbolSystemBodyEnum(self.parent).name}\n"
+                f"Parent: {KerbolSystemBodyEnum(self.parent_id).name}\n"
                 f"Mass: {self.mass} kg\n"
                 f"Mu: {self.mu} m^3/s^2\n"
                 f"Radius: {self.radius} m\n"
@@ -132,3 +138,9 @@ class Body:
             raise ValueError("Invalid planet")
 
         return cls(name_dict[name])
+
+
+def state_vector_at_time(t: float, parent: KerbolSystemBodyEnum,
+                         child: KerbolSystemBodyEnum) -> StateVector:
+    cdata = lib.get_rel_state_at_time(t, parent.value, child.value)
+    return StateVector.from_cdata(cdata)

@@ -38,4 +38,4 @@ bool mat_equal(Matrix3 m1, Matrix3 m2);
 void print_vec(Vector3 v);
 void print_mat(Matrix3 m);
 
-#endif // ORBIT_MATH_H_
+#endif // ORBIT_MATH_H
