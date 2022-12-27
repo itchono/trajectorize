@@ -17,6 +17,7 @@ double kepler_solver(double M, double e);
 KeplerianElements orbitFromStateVector(StateVector state_vector, double mu);
 StateVector stateVectorFromOrbit(KeplerianElements orbit, double mu);
 StateVectorArray stateVectorLocus(KeplerianElements orbit, double mu, int n);
+KeplerianElements propagateKeplerianOrbit(KeplerianElements orbit, double dt, double mu);
 
 double orbital_period(double semi_major_axis, double mu);
 double theta_from_E(double E, double e);

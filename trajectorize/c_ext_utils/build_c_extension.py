@@ -1,8 +1,9 @@
+from sys import platform
+
 from cffi import FFI
 
 from trajectorize.c_ext_utils.c_parsing import (include_dir,
                                                 read_and_cleanse_many_headers)
-from sys import platform
 
 ffi = FFI()
 

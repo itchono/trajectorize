@@ -40,6 +40,29 @@ double kepler_solver(double M, double e)
     return E;
 }
 
+KeplerianElements propagateKeplerianOrbit(KeplerianElements orbit, double dt, double mu)
+{
+    // Compute mean anomaly
+    double T = orbital_period(orbit.semi_major_axis, mu);
+    double M = remainder(2 * M_PI * dt / T, 2 * M_PI);
+    // Use kepler_solver to solve Kepler's equation
+    double E = kepler_solver(M, orbit.eccentricity);
+    // Calculate true anomaly
+    double theta = theta_from_E(E, orbit.eccentricity);
+
+    // Return new orbit
+    KeplerianElements orbit_propagated = {
+        .semi_major_axis = orbit.semi_major_axis,
+        .eccentricity = orbit.eccentricity,
+        .inclination = orbit.inclination,
+        .longitude_of_ascending_node = orbit.longitude_of_ascending_node,
+        .argument_of_periapsis = orbit.argument_of_periapsis,
+        .true_anomaly = theta,
+        .epoch = orbit.epoch + dt};
+
+    return orbit_propagated;
+}
+
 StateVector stateVectorFromOrbit(KeplerianElements orbit, double mu)
 {
     double r = orbit.semi_major_axis * (1 - orbit.eccentricity * orbit.eccentricity) / (1 + orbit.eccentricity * cos(orbit.true_anomaly));
@@ -68,12 +91,11 @@ StateVector stateVectorFromOrbit(KeplerianElements orbit, double mu)
 
 StateVectorArray stateVectorLocus(KeplerianElements orbit, double mu, int n)
 {
-    StateVectorArray state_vector_array = {
-        .n = n,
-        .states = malloc(n * sizeof(StateVector)),
-        .mem_buffer = malloc(n * 7 * sizeof(double))};
+    StateVector *mem_buffer = (StateVector *)malloc(n * sizeof(StateVector));
+    // Format: x, y, z, vx, vy, vz, t
+    // we're doing some crazy struct-packing hackery here
 
-    double d_theta = 2 * M_PI / n;
+    double d_theta = 2 * M_PI / (n - 1); // guarantees full cover
     for (int i = 0; i < n; i++)
     {
         double theta = i * d_theta;
@@ -85,9 +107,16 @@ StateVectorArray stateVectorLocus(KeplerianElements orbit, double mu, int n)
             .argument_of_periapsis = orbit.argument_of_periapsis,
             .true_anomaly = theta,
             .epoch = orbit.epoch};
-        state_vector_array.states[i] = stateVectorFromOrbit(orbit_i, mu);
+        mem_buffer[i] = stateVectorFromOrbit(orbit_i, mu);
     }
-    return state_vector_array;
+
+    StateVectorArray result;
+    // Cast the pointer to a (Nx7) double array
+    result.mem_buffer = (double *)mem_buffer; // C is so crazy lol
+    result.n = n;
+    result.states = mem_buffer;
+
+    return result;
 }
 
 KeplerianElements orbitFromStateVector(StateVector state_vector, double mu)

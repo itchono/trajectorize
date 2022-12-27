@@ -49,11 +49,21 @@ StateVector get_rel_state_at_time(double t, enum BodyEnum parent_id, enum BodyEn
     // calculates relative ECI position of child body rel. to parent
     // ordering of bodies must be exclsively in descending order, i.e. parent
     // must be an ancestor of child (TODO: add a check for this)
-    // performs recursive comparisons if needed
 
     Body child = bodies_list[child_id];
 
-    if (parent_id == child.parent_id)
+    if (parent_id == child_id)
+    {
+        StateVector zero_state = {.position = {.x = 0,
+                                               .y = 0,
+                                               .z = 0},
+                                  .velocity = {.x = 0,
+                                               .y = 0,
+                                               .z = 0},
+                                  .time = t};
+        return zero_state;
+    }
+    else if (parent_id == child.parent_id)
     {
         return get_direct_state_at_time(t, child_id);
     }

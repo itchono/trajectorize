@@ -5,8 +5,8 @@ from dataclasses import dataclass
 import numpy as np
 
 from trajectorize._c_extension import ffi, lib
-from trajectorize.math_lib.math_interfaces import vec3_from_np_array, \
-    np_array_from_vec3
+from trajectorize.math_lib.math_interfaces import (np_array_from_vec3,
+                                                   vec3_from_np_array)
 
 
 @dataclass
@@ -36,7 +36,7 @@ class UniversalKeplerOrbit:
             "position": vec3_from_np_array(self.position),
             "velocity": vec3_from_np_array(self.velocity),
             "time": self.time
-        })
+        })[0]
 
         c_times = ffi.new("double[]", delta_times.tolist())
         prop_orbit = lib.orbitAtManyTimes(

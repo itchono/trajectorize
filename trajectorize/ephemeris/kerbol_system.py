@@ -53,33 +53,56 @@ class Body:
             KerbolSystemBodyEnum.EELOO: lib.Eeloo
         }
 
+        # Hex code colours corresponding to the colour of each body in the
+        # orbital map
+        colour_dict = {
+            KerbolSystemBodyEnum.KERBOL: "fdf3a4",  # yellow
+            KerbolSystemBodyEnum.MOHO: "5d4026",    # brown
+            KerbolSystemBodyEnum.EVE: "83217a",     # purple
+            KerbolSystemBodyEnum.GILLY: "b28c6a",   # tan
+            KerbolSystemBodyEnum.KERBIN: "00a7a5",  # blue
+            KerbolSystemBodyEnum.MUN: "444444",     # grey
+            KerbolSystemBodyEnum.MINMUS: "708077",  # green
+            KerbolSystemBodyEnum.DUNA: "bd5e2f",    # orange
+            KerbolSystemBodyEnum.IKE: "4d4d4d",     # grey
+            KerbolSystemBodyEnum.DRES: "786558",    # brown
+            KerbolSystemBodyEnum.JOOL: "018732",    # green
+            KerbolSystemBodyEnum.LAYTHE: "78a4ea",  # blue
+            KerbolSystemBodyEnum.VALL: "5ea5a5",    # blue
+            KerbolSystemBodyEnum.TYLO: "b3afaa",    # grey
+            KerbolSystemBodyEnum.BOP: "a09381",     # tan
+            KerbolSystemBodyEnum.POL: "aeb359",     # green
+            KerbolSystemBodyEnum.EELOO: "a3aea9"    # green
+        }
+
         if body_id not in body_dict:
             raise ValueError("Invalid planet")
         self._body = body_dict[body_id]
         self.name = KerbolSystemBodyEnum(body_id).name
+        self.colour = colour_dict[body_id]
 
     @property
-    def body(self):
-        return self._body.body_id
+    def body_id(self) -> KerbolSystemBodyEnum:
+        return KerbolSystemBodyEnum(self._body.body_id)
 
     @property
-    def parent(self):
-        return self._body.parent_id.body_id
+    def parent_id(self) -> KerbolSystemBodyEnum:
+        return KerbolSystemBodyEnum(self._body.parent_id)
 
     @property
-    def mass(self):
+    def mass(self) -> float:
         return self._body.mass
 
     @property
-    def mu(self):
+    def mu(self) -> float:
         return self._body.mu
 
     @property
-    def radius(self):
+    def radius(self) -> float:
         return self._body.radius
 
     @property
-    def atmosphere_height(self):
+    def atmosphere_height(self) -> float:
         return self._body.atmosphere_height
 
     @property
@@ -87,7 +110,7 @@ class Body:
         return self._body.orbit
 
     @property
-    def soi_radius(self):
+    def soi_radius(self) -> float:
         return self._body.soi_radius
 
     def __repr__(self):
@@ -105,7 +128,7 @@ class Body:
             f"Semi-major Axis: {self.orbit.semi_major_axis} m\n\t"
             f"Eccentricity: {self.orbit.eccentricity}\n\t"
             f"Inclination: {self.orbit.inclination} rad\n\t"
-            f"Longitude of the Ascending Node: {self.orbit.longitude_of_the_ascending_node} rad\n\t"
+            f"Longitude of the Ascending Node: {self.orbit.longitude_of_ascending_node} rad\n\t"
             f"Argument of Periapsis: {self.orbit.argument_of_periapsis} rad\n\t"
             f"Mean Anomaly at Epoch: {self.orbit.mean_anomaly_at_epoch} rad\n\t"
             f"SOI Radius: {self.soi_radius} m")
