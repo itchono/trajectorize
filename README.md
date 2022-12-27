@@ -12,7 +12,7 @@ Computationally-intensive code is implemented in C, with a Python wrapper made u
 # Installation
 The package is still in development at this time, but you can install it from source.
 
-Run `pip install git+https://github.com/itchono/gravity-assist-flyby-optimizer` to install the package.
+Run `pip install git+https://github.com/itchono/trajectorize` to install the package.
 You will need to have Python 3.8+, and a C compiler installed to compile the C code.
 
 Other Python dependencies are included inside `pyproject.toml`, and will be installed automatically.
