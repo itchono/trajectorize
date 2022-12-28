@@ -38,18 +38,19 @@ if __name__ == "__main__":
 
     plt.style.use('dark_background')
 
-    fig, ax = plt.subplots(figsize=(8, 7))
+    figsize = (3.5, 3.5) if save_anim else (8, 7)
+
+    fig, ax = plt.subplots(figsize=figsize)
 
     planets = Body.planets()
 
     # place title inside the axes so it can blit
     title = ax.set_title(
-        f"UT = {round(t_ut[0]/KERBIN_DAY)}d", y=0.8, x=0.5, fontsize=14)
+        f"Kerbol System, UT = {round(t_ut[0]/KERBIN_DAY)}d",
+        y=0.8, x=0.5, fontsize=10)
 
     ax.set_axis_off()
     ax.set_aspect('equal')
-
-    fig.suptitle("Kerbol System Animation", fontsize=18)
     fig.tight_layout()
 
     # Plot Kerbol and orbits of planets (static; no need to redraw)
@@ -86,7 +87,7 @@ if __name__ == "__main__":
             planet_artists[j].set_data(planet_ephemerides[i][j].position[0],
                                        planet_ephemerides[i][j].position[1])
 
-        title.set_text(f"UT = {round(t_ut[i]/KERBIN_DAY)}d")
+        title.set_text(f"Kerbol System, UT = {round(t_ut[i]/KERBIN_DAY)}d")
 
         return planet_artists + [title]
 
@@ -97,7 +98,8 @@ if __name__ == "__main__":
 
     if save_anim:
         # Write animation to file
+        # TODO: optimize GIF to reduce file size
         writer = PillowWriter(fps=30,
                               metadata=dict(artist='Me'),
-                              bitrate=3000)
+                              bitrate=50)
         animation.save('kerbol_system.gif', writer=writer)
