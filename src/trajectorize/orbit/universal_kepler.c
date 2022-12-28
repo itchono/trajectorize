@@ -112,7 +112,7 @@ StateVector state_vec_orbit_prop(double t, StateVector orbit, double mu)
     return result;
 }
 
-StateVectorArray state_vec_orbit_prop_many(int n, double times[n], StateVector orbit, double mu)
+StateVectorArray state_vec_orbit_prop_many(int n, double times[], StateVector orbit, double mu)
 // RETURNS HEAP ALLOCATED MEMORY; CALLER MUST FREE
 {
     // We're gonna do some hacker shit here

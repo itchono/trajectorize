@@ -88,7 +88,7 @@ StateVector get_rel_state_at_time(double t, enum BodyEnum parent_id, enum BodyEn
     }
 }
 
-StateVectorArray get_rel_state_at_many_times(int n, double times[n], enum BodyEnum parent_id, enum BodyEnum child_id)
+StateVectorArray get_rel_state_at_many_times(int n, double times[], enum BodyEnum parent_id, enum BodyEnum child_id)
 // CALLER MUST FREE RETURNED STRUCT
 {
     StateVector *mem_buffer = (StateVector *)malloc(n * sizeof(StateVector));

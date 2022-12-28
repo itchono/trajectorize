@@ -1,4 +1,6 @@
 # Trajectorize
+[![PyPi Version](https://img.shields.io/pypi/v/trajectorize?style=for-the-badge)](https://pypi.org/project/trajectorize/)
+[![License](https://img.shields.io/github/license/itchono/trajectorize?style=for-the-badge)](https://github.com/itchono/trajectorize/blob/main/LICENSE)
 KSP Trajectory Optimizer.
 
 This project is a reduced-scope version of [one of my other (currently incomplete) projects](https://github.com/itchono/gravity-assist-flyby-optimizer), as an intermediate stepping stone.
@@ -8,6 +10,7 @@ This tool computes trajectories between celestial bodies in KSP based on on-rail
 * Gravity assist flyby routes
 
 Computationally-intensive code is implemented in C, with a Python wrapper made using `cffi`.
+C code follows mostly C89, with some C99 features used. It has been tested against the latest versions of GCC (on Linux) and MSVC (on Windows 10).
 
 # Installation
 The package is still in development at this time, but you can install it from source.
@@ -22,11 +25,11 @@ Right now, full functionality is incomplete. There are, however, some cool demos
 
 ## Full Model of KSP Planetary System and Ephemerides
 `python -m trajectorize.demos.kerbol_system_anim`
-![Kerbol System Animation](https://github.com/itchono/trajectorize/raw/assets/kerbol_system.gif)
+![Kerbol System Animation](https://raw.githubusercontent.com/itchono/trajectorize/assets/kerbol_system.gif)
 
 ## Propagation of Two-Body Trajectories Using Universal Keplerian Elements
 `python -m trajectorize.demos.orbit`
-![Orbit Demo](https://github.com/itchono/trajectorize/raw/assets/orbit_universal.png)
+![Orbit Demo](https://raw.githubusercontent.com/itchono/trajectorize/assets/orbit_universal.png)
 
 # Inspirations
 * [Interactive illustrated interplanetary guide and calculator for KSP](https://ksp.olex.biz/), by Olex
