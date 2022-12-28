@@ -1,9 +1,14 @@
-from sys import platform
-
+import sys
+import pathlib
 from cffi import FFI
 
-from trajectorize.c_ext_utils.c_parsing import (include_dir,
-                                                read_and_cleanse_many_headers)
+# Hack: change working directory to be inside the src/ dir
+# So that the trajectorize package can be imported
+sys.path.append(str(pathlib.Path(__file__).parent.parent.parent))
+# This is necessary to import the c_parsing module
+from trajectorize.c_ext_utils.c_parsing import \
+    (read_and_cleanse_many_headers, include_dir, abs_src_path)  # noqa: E402
+
 
 ffi = FFI()
 
@@ -40,7 +45,7 @@ MSVC options
 
 Compiler type is determined by the value of sys.platform.
 '''
-if platform == "linux" or platform == "linux2":
+if sys.platform == "linux" or sys.platform == "linux2":
     # linux
     extra_compile_args = ["-std=c99", "-lm", "-lc"]
 else:
@@ -56,17 +61,19 @@ ffi.set_source("trajectorize._c_extension",
                #include "universal_kepler.h"
                #include "lambert.h"
                ''',
-               sources=["trajectorize/math_lib/orbit_math.c",
-                        "trajectorize/math_lib/rotations.c",
-                        "trajectorize/math_lib/stumpuff_functions.c",
-                        "trajectorize/ephemeris/kerbol_system_bodies.c",
-                        "trajectorize/ephemeris/kerbol_system_ephemeris.c",
-                        "trajectorize/orbit/conic_kepler.c",
-                        "trajectorize/orbit/universal_kepler.c",
-                        "trajectorize/trajectory/lambert.c"],
+               sources=[f"{abs_src_path}/math_lib/orbit_math.c",
+                        f"{abs_src_path}/math_lib/rotations.c",
+                        f"{abs_src_path}/math_lib/stumpuff_functions.c",
+                        f"{abs_src_path}/ephemeris/kerbol_system_bodies.c",
+                        f"{abs_src_path}/ephemeris/kerbol_system_ephemeris.c",
+                        f"{abs_src_path}/orbit/conic_kepler.c",
+                        f"{abs_src_path}/orbit/universal_kepler.c",
+                        f"{abs_src_path}/trajectory/lambert.c"],
                include_dirs=[include_dir],
                extra_compile_args=extra_compile_args)
 
 if __name__ == "__main__":
     # For debug building
-    ffi.compile()
+    import os
+    os.chdir(pathlib.Path(__file__).parent.parent.parent)
+    ffi.compile(verbose=True)

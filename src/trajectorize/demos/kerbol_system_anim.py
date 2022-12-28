@@ -13,14 +13,17 @@ if __name__ == "__main__":
 
     '''
     Command Line Options
-    
+
     --save: Save the animation to a file
     --length: Length of the animation in years (each year is 426.08 Kerbin days)
     '''
     parser.add_argument("--save", action="store_true",
                         help="Save the animation to a file")
-    parser.add_argument("--length", type=int, default=10,
-                        help="Length of the animation in years (each year is 426.08 Kerbin days)")
+    parser.add_argument(
+        "--length",
+        type=int,
+        default=10,
+        help="Length of the animation in years (each year is 426.08 Kerbin days)")
 
     args = parser.parse_args()
 

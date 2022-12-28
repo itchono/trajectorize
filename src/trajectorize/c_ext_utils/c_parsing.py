@@ -1,6 +1,9 @@
-import os
+import pathlib
 
-include_dir = os.path.join(os.path.dirname(__file__), '../../include')
+include_dir = (pathlib.Path(__file__).parent.parent.parent.parent /
+               "include").resolve()
+abs_src_path = (pathlib.Path(__file__).parent.parent.parent
+                / "trajectorize").resolve()
 
 
 def read_and_cleanse_header(filename: str) -> str:
@@ -8,7 +11,9 @@ def read_and_cleanse_header(filename: str) -> str:
     Reads a header file (.h) and removes macros,
     returning the contents as a string.
     '''
-    with open(os.path.join(include_dir, filename), "r", encoding="utf-8") as f:
+    filepath = (include_dir / filename).resolve()
+
+    with open(str(filepath), "r", encoding="utf-8") as f:
         lines = f.readlines()
         clean_lines = [line for line in lines if not line.startswith("#")]
         return ''.join(clean_lines)
