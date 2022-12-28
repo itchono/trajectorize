@@ -51,8 +51,8 @@ Matrix3 rotation_z(double angle)
 Matrix3 eci_to_perifocal(double raan, double i, double aop)
 {
     Matrix3 result;
-    result = mul_mat(rotation_z(-aop), rotation_x(-i));
-    result = mul_mat(result, rotation_z(-raan));
+    result = mat_mul_mat(rotation_z(-aop), rotation_x(-i));
+    result = mat_mul_mat(result, rotation_z(-raan));
 
     return result;
 }
@@ -60,7 +60,7 @@ Matrix3 eci_to_perifocal(double raan, double i, double aop)
 Matrix3 perifocal_to_eci(double raan, double i, double aop)
 {
     Matrix3 result;
-    result = mul_mat(rotation_z(raan), rotation_x(i));
-    result = mul_mat(result, rotation_z(aop));
+    result = mat_mul_mat(rotation_z(raan), rotation_x(i));
+    result = mat_mul_mat(result, rotation_z(aop));
     return result;
 }

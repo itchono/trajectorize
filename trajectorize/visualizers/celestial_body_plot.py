@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 from matplotlib.artist import Artist
 
-from trajectorize.ephemeris.kerbol_system import (Body, KerbolSystemBodyEnum,
+from trajectorize.ephemeris.kerbol_system import (Body, BodyEnum,
                                                   state_vector_at_time)
 from trajectorize.orbit.conic_kepler import KeplerianElements, KeplerianOrbit
 
@@ -29,38 +29,31 @@ def plot_body_rel_kerbol(body: Body, ut: float, ax: plt.Axes,
     num_ellipse_samples: int
         The number of samples to use when plotting the orbit ellipse.
     '''
-    obj_state_vec = state_vector_at_time(ut, KerbolSystemBodyEnum.KERBOL,
+    obj_state_vec = state_vector_at_time(ut, BodyEnum.KERBOL,
                                          body.body_id)
-
-    kerbol = Body(KerbolSystemBodyEnum.KERBOL)
-
-    elements = KeplerianElements.from_celestial_body(body, ut)
-
     marker, = ax.plot(obj_state_vec.position[0], obj_state_vec.position[1],
-                      'o', markersize=5, color=f"#{body.colour}")
+                      'o', markersize=5, color=body.colour_hex,
+                      label=body.name)
 
     if plot_orbit:
-        obj_orbit = KeplerianOrbit(elements, kerbol)
-        obj_locus = obj_orbit.get_locus(num_ellipse_samples)
+        obj_locus = body.orbit_locus(num_ellipse_samples)
         path, = ax.plot(obj_locus[:, 0], obj_locus[:, 1],
-                        color=f"#{body.colour}",
-                        label=body.name.title())
+                        color=body.colour_hex)
         return marker, path
     else:
-        print(obj_state_vec)
         return marker
 
 
 def kerbol_system_plot(ut: float, ax: plt.Axes,
                        num_ellipse_samples: int = 1000,
                        show_legend: bool = True) -> "tuple(Artist)":
-    all_bodies: "list[Body]" = \
-        [Body(i) for i in KerbolSystemBodyEnum.__members__.values()]
-    planets = [body for body in all_bodies if body.parent_id ==
-               KerbolSystemBodyEnum.KERBOL]  # (also includes Kerbol)
-
+    planets = Body.planets()
     for body in planets:
         plot_body_rel_kerbol(body, ut, ax, num_ellipse_samples)
+
+    # Plot Kerbol
+    kerbol = Body.from_name("Kerbol")
+    ax.plot(0, 0, 'o', markersize=5, color=kerbol.colour_hex)
 
     # Styling
     ax.set_axis_off()

@@ -44,6 +44,7 @@ if platform == "linux" or platform == "linux2":
     # linux
     extra_compile_args = ["-std=c99", "-lm", "-lc"]
 else:
+    # MSVC is already c99 compliant, so no need to specify
     extra_compile_args = []
 
 # Include only the top-level header files.
@@ -68,4 +69,4 @@ ffi.set_source("trajectorize._c_extension",
 
 if __name__ == "__main__":
     # For debug building
-    ffi.compile(verbose=True)
+    ffi.compile()

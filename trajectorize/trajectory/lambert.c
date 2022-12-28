@@ -10,6 +10,6 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double mu, double dt, enum Traje
 {
     // Implementing algorithm D.25 from Curtis
 
-    double r1 = norm(R1);
-    double r2 = norm(R2);
+    double r1 = vec_norm(R1);
+    double r2 = vec_norm(R2);
 }

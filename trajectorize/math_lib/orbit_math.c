@@ -3,17 +3,17 @@
 #include <math.h>
 #include <stdio.h>
 
-double norm(Vector3 v)
+double vec_norm(Vector3 v)
 {
     return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-double dot(Vector3 a, Vector3 b)
+double vec_dot(Vector3 a, Vector3 b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-Vector3 cross(Vector3 a, Vector3 b)
+Vector3 vec_cross(Vector3 a, Vector3 b)
 {
     Vector3 result;
     result.x = a.y * b.z - a.z * b.y;
@@ -22,9 +22,9 @@ Vector3 cross(Vector3 a, Vector3 b)
     return result;
 }
 
-Vector3 normalize(Vector3 v)
+Vector3 vec_normalize(Vector3 v)
 {
-    double n = norm(v);
+    double n = vec_norm(v);
     Vector3 result;
     result.x = v.x / n;
     result.y = v.y / n;
@@ -41,7 +41,7 @@ Vector3 vec_zero()
     return result;
 }
 
-Vector3 add_vec(Vector3 a, Vector3 b)
+Vector3 vec_add(Vector3 a, Vector3 b)
 {
     Vector3 result;
     result.x = a.x + b.x;
@@ -50,7 +50,7 @@ Vector3 add_vec(Vector3 a, Vector3 b)
     return result;
 }
 
-Vector3 sub_vec(Vector3 a, Vector3 b)
+Vector3 vec_sub(Vector3 a, Vector3 b)
 {
     Vector3 result;
     result.x = a.x - b.x;
@@ -59,7 +59,7 @@ Vector3 sub_vec(Vector3 a, Vector3 b)
     return result;
 }
 
-Vector3 mul_scalar_vec(double s, Vector3 v)
+Vector3 vec_mul_scalar(double s, Vector3 v)
 {
     Vector3 result;
     result.x = s * v.x;
@@ -68,7 +68,7 @@ Vector3 mul_scalar_vec(double s, Vector3 v)
     return result;
 }
 
-Matrix3 identity()
+Matrix3 mat_identity()
 {
     Matrix3 result;
     result.m[0][0] = 1.0;
@@ -98,7 +98,7 @@ Matrix3 mat_zero()
     return result;
 }
 
-Matrix3 transpose(Matrix3 m)
+Matrix3 mat_transpose(Matrix3 m)
 {
     Matrix3 result;
     result.m[0][0] = m.m[0][0];
@@ -113,7 +113,7 @@ Matrix3 transpose(Matrix3 m)
     return result;
 }
 
-Matrix3 mul_scalar_mat(double s, Matrix3 m)
+Matrix3 mat_mul_scalar(double s, Matrix3 m)
 {
     Matrix3 result;
     result.m[0][0] = s * m.m[0][0];
@@ -128,7 +128,7 @@ Matrix3 mul_scalar_mat(double s, Matrix3 m)
     return result;
 }
 
-Matrix3 mul_mat(Matrix3 m1, Matrix3 m2)
+Matrix3 mat_mul_mat(Matrix3 m1, Matrix3 m2)
 {
     Matrix3 result;
     result.m[0][0] = m1.m[0][0] * m2.m[0][0] + m1.m[0][1] * m2.m[1][0] + m1.m[0][2] * m2.m[2][0];
@@ -145,7 +145,7 @@ Matrix3 mul_mat(Matrix3 m1, Matrix3 m2)
     return result;
 }
 
-Vector3 mul_mat_vec(Matrix3 m, Vector3 v)
+Vector3 mat_mul_vec(Matrix3 m, Vector3 v)
 {
     Vector3 result;
     result.x = m.m[0][0] * v.x + m.m[0][1] * v.y + m.m[0][2] * v.z;

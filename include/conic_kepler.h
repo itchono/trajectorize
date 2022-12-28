@@ -12,14 +12,14 @@ This file contains definitions for functions related to Keplerian orbits.
 #include "keplerian_element_types.h"
 #include "state_vector_types.h"
 
-double kepler_solver(double M, double e);
-
-KeplerianElements orbitFromStateVector(StateVector state_vector, double mu);
-StateVector stateVectorFromOrbit(KeplerianElements orbit, double mu);
-StateVectorArray stateVectorLocus(KeplerianElements orbit, double mu, int n);
-KeplerianElements propagateKeplerianOrbit(KeplerianElements orbit, double dt, double mu);
-
 double orbital_period(double semi_major_axis, double mu);
 double theta_from_E(double E, double e);
+double E_from_M(double M, double e);     // Kepler's equation
+double theta_from_M(double M, double e); // Kepler's equation, but with theta instead of E
+
+KeplerianElements ke_from_state_vector(StateVector state_vector, double mu);
+StateVector state_vector_from_ke(KeplerianElements orbit, double mu);
+StateVectorArray ke_state_locus(KeplerianElements orbit, double mu, int n);
+KeplerianElements ke_orbit_prop(KeplerianElements orbit, double dt, double mu);
 
 #endif // CONIC_KEPLER_H

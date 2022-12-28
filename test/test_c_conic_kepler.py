@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 from trajectorize.orbit import conic_kepler
@@ -43,3 +44,23 @@ def test_kepler_equation_solver():
     e = 0.37255
     result = conic_kepler.solve_kepler_equation(M, e)
     assert result == pytest.approx(3.479422)
+
+
+def test_ke_from_state_vector():
+    # Using Curtis example 4.3
+    position = np.array([-6045, -3490, 2500])*1e3
+    velocity = np.array([-3.457, 6.618, 2.533])*1e3
+
+    orbit = conic_kepler.KeplerianOrbit.from_state_vector(position,
+                                                          velocity,
+                                                          0,
+                                                          EARTH)
+
+    assert orbit.ke.semi_major_axis == pytest.approx(8788e3, rel=1e-3)
+    assert orbit.ke.eccentricity == pytest.approx(0.1712, rel=1e-4)
+    assert orbit.ke.inclination == pytest.approx(np.deg2rad(153.2), rel=1e-3)
+    assert orbit.ke.longitude_of_ascending_node == pytest.approx(
+        np.deg2rad(255.3), rel=1e-4)
+    assert orbit.ke.argument_of_periapsis == pytest.approx(
+        np.deg2rad(20.07), rel=1e-4)
+    assert orbit.ke.true_anomaly == pytest.approx(np.deg2rad(28.45), rel=1e-3)

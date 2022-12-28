@@ -27,6 +27,6 @@ typedef struct StateVectorArray
     // re-interpreted as a set of StateVectors
 } StateVectorArray;
 
-void freeStateVectorArray(StateVectorArray sva);
+void free_StateVectorArray(StateVectorArray sva);
 
 #endif // STATE_VECTOR_TYPES_H

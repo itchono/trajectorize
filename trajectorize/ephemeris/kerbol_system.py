@@ -1,15 +1,14 @@
 # Wrapper for C code
+from dataclasses import dataclass
 from enum import IntEnum
+
+import numpy as np
 
 from trajectorize._c_extension import ffi, lib
 from trajectorize.ephemeris.state_vector import StateVector
 
-# Path: trajectorize/ephemeris/kerbol_system_bodies.c
 
-# Enums
-
-
-class KerbolSystemBodyEnum(IntEnum):
+class BodyEnum(IntEnum):
     KERBOL = lib.KERBOL
     MOHO = lib.MOHO
     EVE = lib.EVE
@@ -28,143 +27,139 @@ class KerbolSystemBodyEnum(IntEnum):
     POL = lib.POL
     EELOO = lib.EELOO
 
-# Planets
+# PlanetaryKeplerianElements struct class
 
 
-class Body:
-    def __init__(self, body_id: KerbolSystemBodyEnum):
-        body_dict = {
-            KerbolSystemBodyEnum.KERBOL: lib.Kerbol,
-            KerbolSystemBodyEnum.MOHO: lib.Moho,
-            KerbolSystemBodyEnum.EVE: lib.Eve,
-            KerbolSystemBodyEnum.GILLY: lib.Gilly,
-            KerbolSystemBodyEnum.KERBIN: lib.Kerbin,
-            KerbolSystemBodyEnum.MUN: lib.Mun,
-            KerbolSystemBodyEnum.MINMUS: lib.Minmus,
-            KerbolSystemBodyEnum.DUNA: lib.Duna,
-            KerbolSystemBodyEnum.IKE: lib.Ike,
-            KerbolSystemBodyEnum.DRES: lib.Dres,
-            KerbolSystemBodyEnum.JOOL: lib.Jool,
-            KerbolSystemBodyEnum.LAYTHE: lib.Laythe,
-            KerbolSystemBodyEnum.VALL: lib.Vall,
-            KerbolSystemBodyEnum.TYLO: lib.Tylo,
-            KerbolSystemBodyEnum.BOP: lib.Bop,
-            KerbolSystemBodyEnum.POL: lib.Pol,
-            KerbolSystemBodyEnum.EELOO: lib.Eeloo
-        }
-
-        # Hex code colours corresponding to the colour of each body in the
-        # orbital map
-        colour_dict = {
-            KerbolSystemBodyEnum.KERBOL: "fdf3a4",  # yellow
-            KerbolSystemBodyEnum.MOHO: "5d4026",    # brown
-            KerbolSystemBodyEnum.EVE: "83217a",     # purple
-            KerbolSystemBodyEnum.GILLY: "b28c6a",   # tan
-            KerbolSystemBodyEnum.KERBIN: "00a7a5",  # blue
-            KerbolSystemBodyEnum.MUN: "444444",     # grey
-            KerbolSystemBodyEnum.MINMUS: "708077",  # green
-            KerbolSystemBodyEnum.DUNA: "bd5e2f",    # orange
-            KerbolSystemBodyEnum.IKE: "4d4d4d",     # grey
-            KerbolSystemBodyEnum.DRES: "786558",    # brown
-            KerbolSystemBodyEnum.JOOL: "018732",    # green
-            KerbolSystemBodyEnum.LAYTHE: "78a4ea",  # blue
-            KerbolSystemBodyEnum.VALL: "5ea5a5",    # blue
-            KerbolSystemBodyEnum.TYLO: "b3afaa",    # grey
-            KerbolSystemBodyEnum.BOP: "a09381",     # tan
-            KerbolSystemBodyEnum.POL: "aeb359",     # green
-            KerbolSystemBodyEnum.EELOO: "a3aea9"    # green
-        }
-
-        if body_id not in body_dict:
-            raise ValueError("Invalid planet")
-        self._body = body_dict[body_id]
-        self.name = KerbolSystemBodyEnum(body_id).name
-        self.colour = colour_dict[body_id]
-
-    @property
-    def body_id(self) -> KerbolSystemBodyEnum:
-        return KerbolSystemBodyEnum(self._body.body_id)
-
-    @property
-    def parent_id(self) -> KerbolSystemBodyEnum:
-        return KerbolSystemBodyEnum(self._body.parent_id)
-
-    @property
-    def mass(self) -> float:
-        return self._body.mass
-
-    @property
-    def mu(self) -> float:
-        return self._body.mu
-
-    @property
-    def radius(self) -> float:
-        return self._body.radius
-
-    @property
-    def atmosphere_height(self) -> float:
-        return self._body.atmosphere_height
-
-    @property
-    def orbit(self):
-        return self._body.orbit
-
-    @property
-    def soi_radius(self) -> float:
-        return self._body.soi_radius
-
-    def __repr__(self):
-        return f"Body({self.name})"
-
-    def __str__(self):
-        return (
-            f"Body: {self.name}\n"
-            f"Parent: {KerbolSystemBodyEnum(self.parent_id).name}\n"
-            f"Mass: {self.mass} kg\n"
-            f"Mu: {self.mu} m^3/s^2\n"
-            f"Radius: {self.radius} m\n"
-            f"Atmosphere Height: {self.atmosphere_height} m\n"
-            f"Orbit:\n\t"
-            f"Semi-major Axis: {self.orbit.semi_major_axis} m\n\t"
-            f"Eccentricity: {self.orbit.eccentricity}\n\t"
-            f"Inclination: {self.orbit.inclination} rad\n\t"
-            f"Longitude of the Ascending Node: {self.orbit.longitude_of_ascending_node} rad\n\t"
-            f"Argument of Periapsis: {self.orbit.argument_of_periapsis} rad\n\t"
-            f"Mean Anomaly at Epoch: {self.orbit.mean_anomaly_at_epoch} rad\n\t"
-            f"SOI Radius: {self.soi_radius} m")
+@dataclass
+class PlanetaryKeplerianElements:
+    '''
+    Equivalent of C PlanetaryKeplerianElements struct.
+    '''
+    semi_major_axis: float
+    eccentricity: float
+    inclination: float
+    longitude_of_ascending_node: float
+    argument_of_periapsis: float
+    mean_anomaly_at_epoch: float
 
     @classmethod
-    def from_name(cls, name: str):
+    def from_c_data(cls, cdata):
+        return cls(cdata.semi_major_axis,
+                   cdata.eccentricity,
+                   cdata.inclination,
+                   cdata.longitude_of_ascending_node,
+                   cdata.argument_of_periapsis,
+                   cdata.mean_anomaly_at_epoch)
+
+    @property
+    def c_data(self):
+        '''
+        Returns C struct compatible with library functions.
+        '''
+        return ffi.new('PlanetaryKeplerianElements *', self.__dict__)[0]
+
+
+# Planets
+
+@ dataclass
+class Body:
+    body_id: BodyEnum
+    parent_id: BodyEnum
+    mass: float
+    mu: float
+    radius: float
+    atmosphere_height: float
+    orbit: PlanetaryKeplerianElements
+    soi_radius: float
+    colour: int
+
+    @ property
+    def name(self) -> str:
+        return BodyEnum(self.body_id).name.title()
+
+    @ property
+    def colour_hex(self) -> str:
+        # returns as hex string
+        return f"#{self.colour:06x}"
+
+    @classmethod
+    def from_identifier(cls, identifier: "BodyEnum|int") -> "Body":
+        '''
+        Create a Body object from an identifier
+        '''
+        if identifier not in BodyEnum:
+            raise ValueError("Invalid planet")
+
+        body = lib.kerbol_system_bodies[int(identifier)]
+
+        return cls(BodyEnum(body.body_id),
+                   BodyEnum(body.parent_id),
+                   body.mass,
+                   body.mu,
+                   body.radius,
+                   body.atmosphere_height,
+                   PlanetaryKeplerianElements.from_c_data(body.orbit),
+                   body.soi_radius,
+                   body.colour)
+
+    @ classmethod
+    def from_name(cls, name: str) -> "Body":
         '''
         Create a Body object from a string
         '''
-        name_dict = {
-            "Kerbol": KerbolSystemBodyEnum.KERBOL,
-            "Moho": KerbolSystemBodyEnum.MOHO,
-            "Eve": KerbolSystemBodyEnum.EVE,
-            "Gilly": KerbolSystemBodyEnum.GILLY,
-            "Kerbin": KerbolSystemBodyEnum.KERBIN,
-            "Mun": KerbolSystemBodyEnum.MUN,
-            "Minmus": KerbolSystemBodyEnum.MINMUS,
-            "Duna": KerbolSystemBodyEnum.DUNA,
-            "Ike": KerbolSystemBodyEnum.IKE,
-            "Dres": KerbolSystemBodyEnum.DRES,
-            "Jool": KerbolSystemBodyEnum.JOOL,
-            "Laythe": KerbolSystemBodyEnum.LAYTHE,
-            "Vall": KerbolSystemBodyEnum.VALL,
-            "Tylo": KerbolSystemBodyEnum.TYLO,
-            "Bop": KerbolSystemBodyEnum.BOP,
-            "Pol": KerbolSystemBodyEnum.POL,
-            "Eeloo": KerbolSystemBodyEnum.EELOO
-        }
+        name_dict = {k.casefold(): v for k, v in BodyEnum.__members__.items()}
 
-        if name not in name_dict:
+        if name.casefold() not in name_dict:
             raise ValueError("Invalid planet")
 
-        return cls(name_dict[name])
+        return cls.from_identifier(name_dict[name.casefold()])
+
+    @ property
+    def c_data(self):
+        '''
+        Returns C struct compatible with library functions.
+        '''
+        return lib.kerbol_system_bodies[self.body_id.value]
+
+    def orbit_locus(self, num_points: int = 1000) -> np.ndarray:
+        '''
+        Return a (N, 3) array of points on the orbit of the body
+        in state space relative to its parent.
+        '''
+        parent = Body.from_identifier(self.parent_id)
+        state_vec_arr = lib.pke_state_locus(self.orbit.c_data, parent.mu,
+                                            num_points)
+
+        # process memory buffer
+        # Format: [x, y, z, vx, vy, vz, t] x n
+        arr = np.frombuffer(ffi.buffer(state_vec_arr.mem_buffer, 7 *
+                                       8 * num_points), dtype=np.float64)
+        arr.shape = (num_points, 7)
+        positions = np.copy(arr[:, :3])  # copy to avoid memory leak
+
+        lib.free_StateVectorArray(state_vec_arr)
+
+        return positions
+
+    @classmethod
+    def all_bodies(cls) -> "list[Body]":
+        '''
+        Returns a list of all bodies in the system.
+        '''
+        return [cls.from_identifier(i) for i in BodyEnum]
+
+    @classmethod
+    def planets(cls) -> "list[Body]":
+        '''
+        Returns a list of all planets in the system
+        (i.e. Kerbol is their parent)
+        '''
+        bodies = cls.all_bodies()
+        return [body for body in bodies if body.parent_id == BodyEnum.KERBOL
+                and body.body_id != BodyEnum.KERBOL]
 
 
-def state_vector_at_time(t: float, parent: KerbolSystemBodyEnum,
-                         child: KerbolSystemBodyEnum) -> StateVector:
+def state_vector_at_time(t: float, parent: BodyEnum,
+                         child: BodyEnum) -> StateVector:
     cdata = lib.get_rel_state_at_time(t, parent.value, child.value)
     return StateVector.from_cdata(cdata)

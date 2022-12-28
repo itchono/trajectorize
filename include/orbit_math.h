@@ -12,23 +12,23 @@ This header file contains a library of math functions.
 #include <stdbool.h>
 #include "orbit_math_types.h"
 
-double norm(Vector3 v);
-double dot(Vector3 v1, Vector3 v2);
-Vector3 cross(Vector3 v1, Vector3 v2);
-Vector3 normalize(Vector3 v);
+double vec_norm(Vector3 v);
+double vec_dot(Vector3 v1, Vector3 v2);
+Vector3 vec_cross(Vector3 v1, Vector3 v2);
+Vector3 vec_normalize(Vector3 v);
 Vector3 vec_zero();
 
-Vector3 add_vec(Vector3 v1, Vector3 v2);
-Vector3 sub_vec(Vector3 v1, Vector3 v2);
-Vector3 mul_scalar_vec(double s, Vector3 v);
+Vector3 vec_add(Vector3 v1, Vector3 v2);
+Vector3 vec_sub(Vector3 v1, Vector3 v2);
+Vector3 vec_mul_scalar(double s, Vector3 v);
 
-Matrix3 identity();
+Matrix3 mat_identity();
 Matrix3 mat_zero();
-Matrix3 transpose(Matrix3 m);
-Matrix3 mul_scalar_mat(double s, Matrix3 m);
-Matrix3 mul_mat(Matrix3 m1, Matrix3 m2);
+Matrix3 mat_transpose(Matrix3 m);
+Matrix3 mat_mul_scalar(double s, Matrix3 m);
+Matrix3 mat_mul_mat(Matrix3 m1, Matrix3 m2);
 
-Vector3 mul_mat_vec(Matrix3 m, Vector3 v);
+Vector3 mat_mul_vec(Matrix3 m, Vector3 v);
 
 // Comparisons
 bool vec_equal(Vector3 v1, Vector3 v2);

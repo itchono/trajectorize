@@ -23,7 +23,7 @@ class UniversalKeplerOrbit:
             "time": self.time
         })[0]
 
-        new_orbit = lib.orbitAtTime(self.time + dt, orbit_c, self.mu)
+        new_orbit = lib.state_vec_orbit_prop(self.time + dt, orbit_c, self.mu)
 
         new_position = np_array_from_vec3(new_orbit.position)
         new_velocity = np_array_from_vec3(new_orbit.velocity)
@@ -39,7 +39,7 @@ class UniversalKeplerOrbit:
         })[0]
 
         c_times = ffi.new("double[]", delta_times.tolist())
-        prop_orbit = lib.orbitAtManyTimes(
+        prop_orbit = lib.state_vec_orbit_prop_many(
             len(delta_times), c_times, orbit_c, self.mu)
 
         # Process memory buffer
@@ -51,7 +51,7 @@ class UniversalKeplerOrbit:
         velocities = np.copy(arr[:, 3:6])
 
         # Free memory
-        lib.freeStateVectorArray(prop_orbit)
+        lib.free_StateVectorArray(prop_orbit)
 
         return UniversalKeplerOrbit(positions, velocities,
                                     self.time + delta_times, self.mu)

@@ -41,6 +41,7 @@ typedef struct Body
     double atmosphere_height;
     PlanetaryKeplerianElements orbit;
     double soi_radius;
+    int colour; // stored as a hex value (3 bytes)
 } Body;
 
 #endif // EPHEMERIS_KERBOL_SYSTEM_TYPES_H

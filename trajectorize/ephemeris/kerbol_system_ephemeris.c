@@ -5,21 +5,21 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <stdlib.h>
 
 #ifndef M_PI
 // This macro is here for when the linter doesn't see M_PI defined from math.h
-#define M_PI 3.14159265358979323846
+#define M_PI (3.14159265358979323846)
 #endif // M_PI
 
 KeplerianElements ke_from_pke(PlanetaryKeplerianElements pke, double t, double mu)
+// Compute Keplerian elements at some time from planetary Keplerian elements
 {
     // Compute mean anomaly
     double T = orbital_period(pke.semi_major_axis, mu);
     double M = remainder(2 * M_PI * t / T + pke.mean_anomaly_at_epoch, 2 * M_PI);
 
-    double E = kepler_solver(M, pke.eccentricity);
-
-    double true_anomaly = theta_from_E(E, pke.eccentricity);
+    double true_anomaly = theta_from_M(M, pke.eccentricity);
 
     KeplerianElements ke = {.semi_major_axis = pke.semi_major_axis,
                             .eccentricity = pke.eccentricity,
@@ -32,15 +32,23 @@ KeplerianElements ke_from_pke(PlanetaryKeplerianElements pke, double t, double m
     return ke;
 }
 
+StateVectorArray pke_state_locus(PlanetaryKeplerianElements pke, double mu, int n)
+// CALLER MUST FREE RETURNED STRUCT
+{
+    // Generate state space locus of points representing the orbit of a body
+    KeplerianElements ke = ke_from_pke(pke, 0, mu);
+    return ke_state_locus(ke, mu, n);
+}
+
 StateVector get_direct_state_at_time(double t, enum BodyEnum child_id)
 {
     // Get direct state of child wrt its parent at some time
-    Body body = bodies_list[child_id];
-    Body parent = bodies_list[body.parent_id];
+    Body body = kerbol_system_bodies[child_id];
+    Body parent = kerbol_system_bodies[body.parent_id];
 
     KeplerianElements body_ke = ke_from_pke(body.orbit, t, parent.mu);
 
-    return stateVectorFromOrbit(body_ke, parent.mu);
+    return state_vector_from_ke(body_ke, parent.mu);
 }
 
 StateVector get_rel_state_at_time(double t, enum BodyEnum parent_id, enum BodyEnum child_id)
@@ -50,7 +58,7 @@ StateVector get_rel_state_at_time(double t, enum BodyEnum parent_id, enum BodyEn
     // ordering of bodies must be exclsively in descending order, i.e. parent
     // must be an ancestor of child (TODO: add a check for this)
 
-    Body child = bodies_list[child_id];
+    Body child = kerbol_system_bodies[child_id];
 
     if (parent_id == child_id)
     {
@@ -73,9 +81,30 @@ StateVector get_rel_state_at_time(double t, enum BodyEnum parent_id, enum BodyEn
         StateVector child_state = get_direct_state_at_time(t, child_id);
 
         StateVector true_rel_state = {
-            .position = add_vec(parent_state.position, child_state.position),
-            .velocity = add_vec(parent_state.velocity, child_state.velocity),
+            .position = vec_add(parent_state.position, child_state.position),
+            .velocity = vec_add(parent_state.velocity, child_state.velocity),
             .time = parent_state.time};
         return true_rel_state;
     }
+}
+
+StateVectorArray get_rel_state_at_many_times(int n, double times[n], enum BodyEnum parent_id, enum BodyEnum child_id)
+// CALLER MUST FREE RETURNED STRUCT
+{
+    StateVector *mem_buffer = (StateVector *)malloc(n * sizeof(StateVector));
+    // Format: x, y, z, vx, vy, vz, t; t is left as 0
+
+    for (int i = 0; i < n; i++)
+    {
+        StateVector state = get_rel_state_at_time(times[i], parent_id, child_id);
+        mem_buffer[i] = state;
+    }
+
+    StateVectorArray result;
+    // Cast the pointer to a (Nx7) double array
+    result.mem_buffer = (double *)mem_buffer; // C is so crazy lol
+    result.n = n;
+    result.states = mem_buffer;
+
+    return result;
 }

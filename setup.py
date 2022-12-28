@@ -24,7 +24,6 @@ setup(
     install_requires=["cffi>=1.15.0",
                       "numpy>=1.24.0",
                       "matplotlib>=3.6.0",
-                      "mayavi",
                       "tqdm"],
     setup_requires=["cffi>=1.15.0"],
     python_requires=">=3.8",

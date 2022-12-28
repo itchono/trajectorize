@@ -1,6 +1,6 @@
 import pytest
 
-from trajectorize.ephemeris.kerbol_system import (Body, KerbolSystemBodyEnum,
+from trajectorize.ephemeris.kerbol_system import (Body, BodyEnum,
                                                   state_vector_at_time)
 
 
@@ -12,8 +12,8 @@ def test_kerbin_parameters():
 
 
 def test_ephemeris_1():
-    initial_kerbin_State = state_vector_at_time(0, KerbolSystemBodyEnum.KERBOL,
-                                                KerbolSystemBodyEnum.KERBIN)
+    initial_kerbin_State = state_vector_at_time(0, BodyEnum.KERBOL,
+                                                BodyEnum.KERBIN)
 
     assert initial_kerbin_State.time == 0
     print(initial_kerbin_State)

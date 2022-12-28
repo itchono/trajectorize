@@ -7,7 +7,7 @@
 
 #ifndef M_PI
 // This macro is here for when the linter doesn't see M_PI defined from math.h
-#define M_PI 3.14159265358979323846
+#define M_PI (3.14159265358979323846)
 #endif // M_PI
 
 #include <stdlib.h>
@@ -18,7 +18,8 @@
 #define ATOL 1e-12
 #define MAX_ITER 10 // convergence is usually reached in 2 iterations on low eccentricity orbits
 
-double kepler_solver(double M, double e)
+double E_from_M(double M, double e)
+// cubic convergent Kepler solver
 {
     // Use initial guess from Battin's paper
     double E = M + e * sin(M) / (1 - sin(M + e) + sin(M));
@@ -40,13 +41,28 @@ double kepler_solver(double M, double e)
     return E;
 }
 
-KeplerianElements propagateKeplerianOrbit(KeplerianElements orbit, double dt, double mu)
+double orbital_period(double semi_major_axis, double mu)
+{
+    return 2 * M_PI / sqrt(mu) * pow(semi_major_axis, 1.5);
+}
+
+double theta_from_E(double E, double e)
+{
+    return 2 * atan(sqrt((1 + e) / (1 - e)) * tan(E / 2));
+}
+
+double theta_from_M(double M, double e)
+{
+    return theta_from_E(E_from_M(M, e), e);
+}
+
+KeplerianElements ke_orbit_prop(KeplerianElements orbit, double dt, double mu)
 {
     // Compute mean anomaly
     double T = orbital_period(orbit.semi_major_axis, mu);
     double M = remainder(2 * M_PI * dt / T, 2 * M_PI);
-    // Use kepler_solver to solve Kepler's equation
-    double E = kepler_solver(M, orbit.eccentricity);
+    // Use E_from_M to solve Kepler's equation
+    double E = E_from_M(M, orbit.eccentricity);
     // Calculate true anomaly
     double theta = theta_from_E(E, orbit.eccentricity);
 
@@ -63,7 +79,7 @@ KeplerianElements propagateKeplerianOrbit(KeplerianElements orbit, double dt, do
     return orbit_propagated;
 }
 
-StateVector stateVectorFromOrbit(KeplerianElements orbit, double mu)
+StateVector state_vector_from_ke(KeplerianElements orbit, double mu)
 {
     double r = orbit.semi_major_axis * (1 - orbit.eccentricity * orbit.eccentricity) / (1 + orbit.eccentricity * cos(orbit.true_anomaly));
     double x = r * cos(orbit.true_anomaly);
@@ -82,17 +98,17 @@ StateVector stateVectorFromOrbit(KeplerianElements orbit, double mu)
                                  orbit.argument_of_periapsis);
 
     StateVector state_vector = {
-        mul_mat_vec(R, perifocal_position),
-        mul_mat_vec(R, perifocal_velocity),
+        mat_mul_vec(R, perifocal_position),
+        mat_mul_vec(R, perifocal_velocity),
         orbit.epoch};
 
     return state_vector;
 }
 
-StateVectorArray stateVectorLocus(KeplerianElements orbit, double mu, int n)
+StateVectorArray ke_state_locus(KeplerianElements orbit, double mu, int n)
 {
     StateVector *mem_buffer = (StateVector *)malloc(n * sizeof(StateVector));
-    // Format: x, y, z, vx, vy, vz, t
+    // Format: x, y, z, vx, vy, vz, t; t is set to the epoch of the orbit (invariant)
     // we're doing some crazy struct-packing hackery here
 
     double d_theta = 2 * M_PI / (n - 1); // guarantees full cover
@@ -107,7 +123,7 @@ StateVectorArray stateVectorLocus(KeplerianElements orbit, double mu, int n)
             .argument_of_periapsis = orbit.argument_of_periapsis,
             .true_anomaly = theta,
             .epoch = orbit.epoch};
-        mem_buffer[i] = stateVectorFromOrbit(orbit_i, mu);
+        mem_buffer[i] = state_vector_from_ke(orbit_i, mu);
     }
 
     StateVectorArray result;
@@ -119,42 +135,51 @@ StateVectorArray stateVectorLocus(KeplerianElements orbit, double mu, int n)
     return result;
 }
 
-KeplerianElements orbitFromStateVector(StateVector state_vector, double mu)
+KeplerianElements ke_from_state_vector(StateVector state_vector, double mu)
 {
-    Vector3 h = cross(state_vector.position, state_vector.velocity);
-    double h_norm = norm(h);
-    double r = norm(state_vector.position);
-    double v = norm(state_vector.velocity);
+    // angular momentum
+    Vector3 h = vec_cross(state_vector.position, state_vector.velocity);
+    double h_norm = vec_norm(h);
+    double r = vec_norm(state_vector.position);
+    double v = vec_norm(state_vector.velocity);
 
-    double e_vec_x = (v * v - mu / r) * state_vector.position.x / mu - dot(state_vector.position, state_vector.velocity) * state_vector.velocity.x / mu;
-    double e_vec_y = (v * v - mu / r) * state_vector.position.y / mu - dot(state_vector.position, state_vector.velocity) * state_vector.velocity.y / mu;
-    double e_vec_z = (v * v - mu / r) * state_vector.position.z / mu - dot(state_vector.position, state_vector.velocity) * state_vector.velocity.z / mu;
+    // semi-major axis
+    double a = 1 / (2 / r - v * v / mu);
+
+    // compute eccentricity vector
+    double e_vec_x = (v * v - mu / r) * state_vector.position.x / mu - vec_dot(state_vector.position, state_vector.velocity) * state_vector.velocity.x / mu;
+    double e_vec_y = (v * v - mu / r) * state_vector.position.y / mu - vec_dot(state_vector.position, state_vector.velocity) * state_vector.velocity.y / mu;
+    double e_vec_z = (v * v - mu / r) * state_vector.position.z / mu - vec_dot(state_vector.position, state_vector.velocity) * state_vector.velocity.z / mu;
     Vector3 e_vec = {.v = {e_vec_x, e_vec_y, e_vec_z}};
-    double e = norm(e_vec);
+    double e = vec_norm(e_vec);
 
+    // compute inclination
     double n_vec_x = -h.y;
     double n_vec_y = h.x;
     double n_vec_z = 0;
     Vector3 n_vec = {.v = {n_vec_x, n_vec_y, n_vec_z}};
-    double n = norm(n_vec);
+    double n = vec_norm(n_vec);
 
     double i = acos(h.z / h_norm);
+
+    // compute longitude of ascending node
     double Omega = acos(n_vec.x / n);
     if (n_vec.y < 0)
         Omega = 2 * M_PI - Omega;
-    double omega = acos(dot(n_vec, e_vec) / (n * e));
+
+    // compute argument of periapsis
+    double omega = acos(vec_dot(n_vec, e_vec) / (n * e));
     if (e_vec.z < 0)
         omega = 2 * M_PI - omega;
 
-    double E = acos((1 / e) * (1 - r / norm(h)) * dot(e_vec, state_vector.position) + (1 / e) * dot(state_vector.velocity, state_vector.position) / sqrt(mu));
-    if (dot(state_vector.position, state_vector.velocity) < 0)
+    // compute true anomaly, correcting for quadrant
+    double E = acos((1 / e) * (1 - r / a));
+    if (vec_dot(state_vector.position, state_vector.velocity) < 0)
         E = 2 * M_PI - E;
 
     double nu = acos((cos(E) - e) / (1 - e * cos(E)));
     if (E > M_PI)
         nu = 2 * M_PI - nu;
-
-    double a = 1 / (2 / r - v * v / mu);
 
     KeplerianElements orbit = {
         a,
@@ -166,14 +191,4 @@ KeplerianElements orbitFromStateVector(StateVector state_vector, double mu)
         state_vector.time};
 
     return orbit;
-}
-
-double orbital_period(double semi_major_axis, double mu)
-{
-    return 2 * M_PI / sqrt(mu) * pow(semi_major_axis, 1.5);
-}
-
-double theta_from_E(double E, double e)
-{
-    return 2 * atan(sqrt((1 + e) / (1 - e)) * tan(E / 2));
 }
