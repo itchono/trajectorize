@@ -39,6 +39,8 @@ GCC options
 -std=c99: Use C99 standard
 -lm: Link math library
 -lc: Link C standard library
+-march=native: Optimize for the current CPU
+-O3: Optimize for speed
 
 MSVC options
 
@@ -47,7 +49,7 @@ Compiler type is determined by the value of sys.platform.
 '''
 if sys.platform == "linux" or sys.platform == "linux2":
     # linux
-    extra_compile_args = ["-std=c99", "-lm", "-lc"]
+    extra_compile_args = ["-std=c99", "-lm", "-lc", "-O3"]
 else:
     # MSVC is already c99 compliant, so no need to specify
     extra_compile_args = None
