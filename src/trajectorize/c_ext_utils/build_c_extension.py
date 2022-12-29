@@ -4,10 +4,16 @@ from cffi import FFI
 
 # Hack: change working directory to be inside the src/ dir
 # So that the trajectorize package can be imported
-sys.path.append(str(pathlib.Path(__file__).parent.parent.parent))
-# This is necessary to import the c_parsing module
-from trajectorize.c_ext_utils.c_parsing import \
-    (read_and_cleanse_many_headers, include_dir, abs_src_path)  # noqa: E402
+if __name__ != "__main__":
+    # For normal building
+    sys.path.append(str(pathlib.Path(__file__).parent.parent.parent.resolve()))
+    from trajectorize.c_ext_utils.c_parsing import \
+        (read_and_cleanse_many_headers, include_dir, abs_src_path)
+else:
+    # For debug building
+    from c_parsing import \
+        (read_and_cleanse_many_headers, include_dir)
+    abs_src_path = "trajectorize"
 
 
 ffi = FFI()
@@ -76,6 +82,4 @@ ffi.set_source("trajectorize._c_extension",
 
 if __name__ == "__main__":
     # For debug building
-    import os
-    os.chdir(pathlib.Path(__file__).parent.parent.parent)
     ffi.compile(verbose=True)

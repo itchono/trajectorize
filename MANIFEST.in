@@ -1,3 +1,1 @@
 graft include
-include src/trajectorize/**/*.c
-exclude src/trajectorize/**/_c_*.c

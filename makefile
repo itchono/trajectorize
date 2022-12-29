@@ -1,5 +1,5 @@
 src/trajectorize/_c_extension.so: src/trajectorize/c_ext_utils/build_c_extension.py
-	python $<
+	(cd src; python trajectorize/c_ext_utils/build_c_extension.py)
 
 autoformat:
 	autopep8 --in-place --recursive --aggressive --aggressive src/trajectorize/ -v
