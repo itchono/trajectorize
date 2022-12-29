@@ -1,7 +1,7 @@
 #include "kerbol_system_ephemeris.h"
 #include "conic_kepler.h"
 #include "kerbol_system_bodies.h"
-#include "orbit_math.h"
+#include "vec_math.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>

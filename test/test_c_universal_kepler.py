@@ -1,6 +1,5 @@
 import numpy as np
 
-from trajectorize.ephemeris.kerbol_system import Body
 from trajectorize.orbit.universal_kepler import UniversalKeplerOrbit
 
 
@@ -12,9 +11,6 @@ def test_universal_kepler():
     orb = UniversalKeplerOrbit(r0, v0, 0, 3.986e14)
 
     orb2 = orb.propagate(t)
-
-    print(orb2.position)
-    print(orb2.velocity)
 
     assert np.allclose(orb2.position, np.array(
         [-3297.7686252e3, 7413.39664579e3, 0]))
@@ -30,8 +26,6 @@ def test_universal_kepler_vec():
     orb = UniversalKeplerOrbit(r0, v0, 0, 3.986e14)
 
     orb2 = orb.propagate_vec(t)
-
-    print(orb2.position)
 
     assert np.allclose(orb2.position[1, :], np.array(
         [-3297.7686252e3, 7413.39664579e3, 0]))

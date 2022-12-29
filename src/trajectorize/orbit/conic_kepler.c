@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 
-#include "orbit_math.h"
+#include "vec_math.h"
 #include "rotations.h"
 
 #define ATOL 1e-12

@@ -1,11 +1,11 @@
 #include "universal_kepler.h"
-#include "orbit_math.h"
+#include "vec_math.h"
 #include "stumpuff_functions.h"
 #include <math.h>
 #include <stdlib.h>
 
-#define ATOL 1e-12
-#define MAX_ITER 50
+#define ATOL (1e-12)
+#define MAX_ITER (50)
 
 typedef struct LagrangeCoefficients
 {
