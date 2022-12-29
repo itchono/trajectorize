@@ -39,10 +39,12 @@ Right now, full functionality is incomplete. There are, however, some cool demos
 
 ## Full Model of KSP Planetary System and Ephemerides
 `python -m trajectorize.demos.kerbol_system_anim`
+
 ![Kerbol System Animation](https://raw.githubusercontent.com/itchono/trajectorize/assets/kerbol_system.gif)
 
 ## Propagation of Two-Body Trajectories Using Universal Keplerian Elements
 `python -m trajectorize.demos.orbit`
+
 ![Orbit Demo](https://raw.githubusercontent.com/itchono/trajectorize/assets/orbit_universal.png)
 
 # Inspirations
