@@ -1,19 +1,30 @@
 import sys
-import pathlib
 from cffi import FFI
 
-# Hack: change working directory to be inside the src/ dir
-# So that the trajectorize package can be imported
-if __name__ != "__main__":
-    # For normal building
-    sys.path.append(str(pathlib.Path(__file__).parent.parent.parent.resolve()))
-    from trajectorize.c_ext_utils.c_parsing import \
-        (read_and_cleanse_many_headers, include_dir, abs_src_path)
-else:
-    # For debug building
-    from c_parsing import \
-        (read_and_cleanse_many_headers, include_dir)
-    abs_src_path = "trajectorize"
+include_dir = "include" if __name__ != "__main__" else "../include"
+src_path = "src/trajectorize" if __name__ != "__main__" else "trajectorize"
+
+
+def read_and_cleanse_header(filename: str) -> str:
+    '''
+    Reads a header file (.h) and removes macros,
+    returning the contents as a string.
+    '''
+    filepath = f"{include_dir}/{filename}"
+
+    with open(str(filepath), "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        clean_lines = [line for line in lines if not line.startswith("#")]
+        return ''.join(clean_lines)
+
+
+def read_and_cleanse_many_headers(*filenames: str) -> str:
+    '''
+    Utility function for reading and cleansing multiple header files,
+    joining them into a single string suitable for cffi.cdef().
+    '''
+    return ''.join([read_and_cleanse_header(filename)
+                   for filename in filenames])
 
 
 ffi = FFI()
@@ -69,14 +80,14 @@ ffi.set_source("trajectorize._c_extension",
                #include "universal_kepler.h"
                #include "lambert.h"
                ''',
-               sources=[f"{abs_src_path}/math_lib/orbit_math.c",
-                        f"{abs_src_path}/math_lib/rotations.c",
-                        f"{abs_src_path}/math_lib/stumpuff_functions.c",
-                        f"{abs_src_path}/ephemeris/kerbol_system_bodies.c",
-                        f"{abs_src_path}/ephemeris/kerbol_system_ephemeris.c",
-                        f"{abs_src_path}/orbit/conic_kepler.c",
-                        f"{abs_src_path}/orbit/universal_kepler.c",
-                        f"{abs_src_path}/trajectory/lambert.c"],
+               sources=[f"{src_path}/math_lib/orbit_math.c",
+                        f"{src_path}/math_lib/rotations.c",
+                        f"{src_path}/math_lib/stumpuff_functions.c",
+                        f"{src_path}/ephemeris/kerbol_system_bodies.c",
+                        f"{src_path}/ephemeris/kerbol_system_ephemeris.c",
+                        f"{src_path}/orbit/conic_kepler.c",
+                        f"{src_path}/orbit/universal_kepler.c",
+                        f"{src_path}/trajectory/lambert.c"],
                include_dirs=[include_dir],
                extra_compile_args=extra_compile_args)
 
