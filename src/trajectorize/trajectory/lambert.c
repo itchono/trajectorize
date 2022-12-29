@@ -9,7 +9,7 @@
 #endif // M_PI
 
 #define ATOL (1e-12)
-#define MAX_ITER (50)
+#define MAX_ITER (100)
 #define NEWTON_SWITCHOVER_POINT (1e-4)
 
 double func_y(double z, double r1, double r2, double A)
@@ -44,7 +44,7 @@ double deriv_F_z(double z, double r1, double r2, double A, double mu)
     return pow(y / stumpC(z), 1.5) * (1 / 2 / z * (stumpC(z) - 3 * stumpS(z) / 2 / stumpC(z)) + 3 * pow(stumpS(z), 2) / 4 / stumpC(z)) + A / 8 * (3 * stumpS(z) / stumpC(z) * sqrt(y) + A * sqrt(stumpC(z) / y));
 }
 
-LambertSolution lambert(Vector3 R1, Vector3 R2, double mu, double dt, enum TrajectoryType type)
+LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum TrajectoryType type)
 {
     // Implementing algorithm D.25 from Curtis
 
@@ -74,8 +74,6 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double mu, double dt, enum Traje
     double a = -50;
     double b = 50;
     double z = (a + b) / 2;
-
-    int nfev = 0;
 
     for (int i = 0; i < MAX_ITER; i++)
     {

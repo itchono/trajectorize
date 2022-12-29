@@ -2,19 +2,7 @@ import numpy as np
 import pytest
 
 from trajectorize.orbit import conic_kepler
-
-
-class MonkeyPatchedBody:
-    '''
-    Defines a body with a monkey-patched mu attribute which behaves like a
-    Body from the kerbol_system module.
-    '''
-
-    def __init__(self, mu):
-        self.mu = mu
-
-
-EARTH = MonkeyPatchedBody(3.986004418e14)
+from trajectorize.tester_utils.fake_body import EARTH_SI
 
 
 def test_orbital_period():
@@ -32,7 +20,7 @@ def test_orbital_period():
         epoch=0
     )
 
-    orbit = conic_kepler.KeplerianOrbit(elements, EARTH)
+    orbit = conic_kepler.KeplerianOrbit(elements, EARTH_SI)
 
     # Assert that the orbital period is correct
     assert orbit.T == pytest.approx(6307.12, abs=1e-2)
@@ -54,7 +42,7 @@ def test_ke_from_state_vector():
     orbit = conic_kepler.KeplerianOrbit.from_state_vector(position,
                                                           velocity,
                                                           0,
-                                                          EARTH)
+                                                          EARTH_SI)
 
     assert orbit.ke.semi_major_axis == pytest.approx(8788e3, rel=1e-3)
     assert orbit.ke.eccentricity == pytest.approx(0.1712, rel=1e-4)

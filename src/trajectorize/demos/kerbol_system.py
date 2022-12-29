@@ -15,6 +15,6 @@ if __name__ == "__main__":
     # Agg backend is used for non-GUI environments
     if plt.get_backend() == "agg":
         plt.savefig("kerbol_system.png")
-        print("Non-GUI backend detected. Plot saved to orbit.png")
+        print("Non-GUI backend detected. Plot saved to kerbol_system.png")
     else:
         plt.show()

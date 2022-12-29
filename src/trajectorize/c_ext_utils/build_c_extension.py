@@ -47,7 +47,8 @@ ffi.cdef(read_and_cleanse_many_headers("orbit_math_types.h",
                                        "kerbol_system_ephemeris.h",
                                        "conic_kepler.h",
                                        "universal_kepler.h",
-                                       "lambert.h"))
+                                       "lambert.h",
+                                       "transfer_orbit.h"))
 
 '''
 Determine compiler flags and linker args depending on platform.
@@ -79,6 +80,7 @@ ffi.set_source("trajectorize._c_extension",
                #include "conic_kepler.h"
                #include "universal_kepler.h"
                #include "lambert.h"
+               #include "transfer_orbit.h"
                ''',
                sources=[f"{src_path}/math_lib/orbit_math.c",
                         f"{src_path}/math_lib/rotations.c",
@@ -87,7 +89,8 @@ ffi.set_source("trajectorize._c_extension",
                         f"{src_path}/ephemeris/kerbol_system_ephemeris.c",
                         f"{src_path}/orbit/conic_kepler.c",
                         f"{src_path}/orbit/universal_kepler.c",
-                        f"{src_path}/trajectory/lambert.c"],
+                        f"{src_path}/trajectory/lambert.c",
+                        f"{src_path}/trajectory/transfer_orbit.c"],
                include_dirs=[include_dir],
                extra_compile_args=extra_compile_args)
 

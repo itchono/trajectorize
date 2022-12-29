@@ -141,6 +141,13 @@ class Body:
 
         return positions
 
+    @property
+    def parent(self) -> "Body":
+        '''
+        Returns the parent body of this body.
+        '''
+        return Body.from_identifier(self.parent_id)
+
     @classmethod
     def all_bodies(cls) -> "list[Body]":
         '''

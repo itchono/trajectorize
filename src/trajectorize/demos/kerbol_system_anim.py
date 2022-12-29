@@ -94,7 +94,10 @@ if __name__ == "__main__":
     animation = FuncAnimation(fig, animate, frames=len(
         t_ut) - 1, interval=30, blit=True)
 
-    plt.show()
+    if plt.get_backend() == "agg":
+        print("Non-GUI backend detected. Cannot show animation.")
+    else:
+        plt.show()
 
     if save_anim:
         # Write animation to file
