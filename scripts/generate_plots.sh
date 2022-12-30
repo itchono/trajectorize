@@ -7,4 +7,5 @@ export MPLBACKEND=Agg
 # Generate plots
 python -m trajectorize.demos.orbit
 python -m trajectorize.demos.kerbin_duna_transfer
+python -m trajectorize.demos.kerbin_duna_porkchop
 python -m trajectorize.demos.kerbol_system_anim --save

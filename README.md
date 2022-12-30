@@ -58,6 +58,12 @@ Right now, full functionality is incomplete. There are, however, some cool demos
 
 ![Orbit Demo](https://raw.githubusercontent.com/itchono/trajectorize/assets/orbit_universal.png)
 
+## Calculations of Optimal Transfers, Porkchop Plots
+
+`python -m trajectorize.demos.kerbin_duna_porkchop`
+
+![Porkchop](https://raw.githubusercontent.com/itchono/trajectorize/assets/kerbin_duna_porkchop.png)
+
 # Inspirations
 
 * [Interactive illustrated interplanetary guide and calculator for KSP](https://ksp.olex.biz/), by Olex

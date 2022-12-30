@@ -11,7 +11,7 @@ if __name__ == "__main__":
     duna = Body.from_name("Duna")
 
     t1 = 5091552
-    t2 = 15679760
+    t2 = 10679760
 
     plt.style.use('dark_background')
 
