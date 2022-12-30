@@ -134,3 +134,6 @@ dmypy.json
 
 # VS Code
 .vscode/
+
+# Versioning from setuptools_scm
+src/trajectorize/_version.py
