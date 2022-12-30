@@ -159,7 +159,7 @@ StateVectorArray ke_state_locus(KeplerianElements orbit, double mu, int n)
     return result;
 }
 
-StateVectorArray ke_orbit_prop_many(int n, double times[n], KeplerianElements orbit, double mu)
+StateVectorArray ke_orbit_prop_many(int n, double times[], KeplerianElements orbit, double mu)
 {
     StateVector *mem_buffer = (StateVector *)malloc(n * sizeof(StateVector));
     // Format: x, y, z, vx, vy, vz, t; t is set to the epoch of the orbit (invariant)
