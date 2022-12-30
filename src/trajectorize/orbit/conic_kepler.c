@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 
-#include "orbit_math.h"
+#include "vec_math.h"
 #include "rotations.h"
 
 #define ATOL 1e-12
@@ -56,11 +56,35 @@ double theta_from_M(double M, double e)
     return theta_from_E(E_from_M(M, e), e);
 }
 
-KeplerianElements ke_orbit_prop(KeplerianElements orbit, double dt, double mu)
+double E_from_theta(double theta, double e)
 {
+    return 2 * atan(sqrt((1 - e) / (1 + e)) * tan(theta / 2));
+}
+double M_from_theta(double theta, double e)
+{
+    return M_from_E(E_from_theta(theta, e), e);
+}
+double M_from_E(double E, double e)
+{
+    return E - e * sin(E);
+}
+
+KeplerianElements ke_orbit_prop(double t, KeplerianElements orbit, double mu)
+{
+    double dt = t - orbit.epoch;
+    if (dt < 0)
+    {
+        return (KeplerianElements){0};
+    }
+    else if (dt == 0)
+    {
+        return orbit;
+    }
+    double M_at_epoch = M_from_theta(orbit.true_anomaly, orbit.eccentricity);
+
     // Compute mean anomaly
     double T = orbital_period(orbit.semi_major_axis, mu);
-    double M = remainder(2 * M_PI * dt / T, 2 * M_PI);
+    double M = remainder(2 * M_PI * dt / T + M_at_epoch, 2 * M_PI);
     // Use E_from_M to solve Kepler's equation
     double E = E_from_M(M, orbit.eccentricity);
     // Calculate true anomaly
@@ -85,9 +109,9 @@ StateVector state_vector_from_ke(KeplerianElements orbit, double mu)
     double x = r * cos(orbit.true_anomaly);
     double y = r * sin(orbit.true_anomaly);
 
-    double v = sqrt(mu * (2 / r - 1 / orbit.semi_major_axis));
-    double vx = -v * sin(orbit.true_anomaly);
-    double vy = v * (orbit.eccentricity + cos(orbit.true_anomaly));
+    double h = sqrt(mu * orbit.semi_major_axis * (1 - orbit.eccentricity * orbit.eccentricity));
+    double vx = -mu / h * sin(orbit.true_anomaly);
+    double vy = mu / h * (orbit.eccentricity + cos(orbit.true_anomaly));
 
     Vector3 perifocal_position = {.v = {x, y, 0}};
     Vector3 perifocal_velocity = {.v = {vx, vy, 0}};
@@ -129,6 +153,23 @@ StateVectorArray ke_state_locus(KeplerianElements orbit, double mu, int n)
     StateVectorArray result;
     // Cast the pointer to a (Nx7) double array
     result.mem_buffer = (double *)mem_buffer; // C is so crazy lol
+    result.n = n;
+    result.states = mem_buffer;
+
+    return result;
+}
+
+StateVectorArray ke_orbit_prop_many(int n, double times[], KeplerianElements orbit, double mu)
+{
+    StateVector *mem_buffer = (StateVector *)malloc(n * sizeof(StateVector));
+    // Format: x, y, z, vx, vy, vz, t; t is set to the epoch of the orbit (invariant)
+    for (int i = 0; i < n; i++)
+    {
+        mem_buffer[i] = state_vector_from_ke(ke_orbit_prop(times[i], orbit, mu), mu);
+    }
+    StateVectorArray result;
+    // Cast the pointer to a (Nx7) double array
+    result.mem_buffer = (double *)mem_buffer;
     result.n = n;
     result.states = mem_buffer;
 

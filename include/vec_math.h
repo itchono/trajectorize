@@ -1,21 +1,21 @@
 /*
 Trajectorize
 
-Math Library
+Vector Math Library
 
 This header file contains a library of math functions.
 */
 
-#ifndef ORBIT_MATH_H
-#define ORBIT_MATH_H
+#ifndef VEC_MATH_H
+#define VEC_MATH_H
 
 #include <stdbool.h>
-#include "orbit_math_types.h"
+#include "vec_math_types.h"
 
 double vec_norm(Vector3 v);
 double vec_dot(Vector3 v1, Vector3 v2);
 Vector3 vec_cross(Vector3 v1, Vector3 v2);
-Vector3 vec_normalize(Vector3 v);
+Vector3 vec_normalized(Vector3 v);
 Vector3 vec_zero();
 
 Vector3 vec_add(Vector3 v1, Vector3 v2);
@@ -38,4 +38,4 @@ bool mat_equal(Matrix3 m1, Matrix3 m2);
 void print_vec(Vector3 v);
 void print_mat(Matrix3 m);
 
-#endif // ORBIT_MATH_H
+#endif // VEC_MATH_H

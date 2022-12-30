@@ -141,6 +141,13 @@ class Body:
 
         return positions
 
+    @property
+    def parent(self) -> "Body":
+        '''
+        Returns the parent body of this body.
+        '''
+        return Body.from_identifier(self.parent_id)
+
     @classmethod
     def all_bodies(cls) -> "list[Body]":
         '''
@@ -162,4 +169,4 @@ class Body:
 def state_vector_at_time(t: float, parent: BodyEnum,
                          child: BodyEnum) -> StateVector:
     cdata = lib.get_rel_state_at_time(t, parent.value, child.value)
-    return StateVector.from_cdata(cdata)
+    return StateVector.from_c_data(cdata)

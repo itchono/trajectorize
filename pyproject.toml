@@ -1,3 +1,44 @@
 [build-system]
-requires = ["setuptools>=61", "wheel", "cffi>=1.15.0"]
+requires = [
+    "setuptools>=64",
+    "wheel",
+    "cffi>=1.15.0",
+    "setuptools_scm[toml]>=6.0",
+]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "trajectorize"
+description = "KSP Trajectory Optimization"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "LGPLv3" }
+authors = [{ name = "Mingde Yin", email = "mdsuper@hotmail.com" }]
+maintainers = [{ name = "Mingde Yin", email = "mdsuper@hotmail.com" }]
+keywords = ["kerbal space program", "trajectory", "optimization"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: C",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+dependencies = ["numpy >= 1.23.0", "matplotlib >= 3.4.0", "cffi >= 1.15.0"]
+dynamic = ["version"]
+
+[project.urls]
+homepage = "https://github.com/itchono/trajectorize"
+
+[tool.setuptools.packages.find]
+include = ["trajectorize"]
+where = ["src"]
+
+[tool.setuptools_scm]
+write_to = "src/trajectorize/_version.py"

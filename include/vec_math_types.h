@@ -7,8 +7,8 @@ This header file contains typedefs and initializers
 for the various math types used in Trajectorize.
 */
 
-#ifndef ORBIT_MATH_TYPES_H
-#define ORBIT_MATH_TYPES_H
+#ifndef VEC_MATH_TYPES_H
+#define VEC_MATH_TYPES_H
 
 typedef union Vector3
 {
@@ -32,4 +32,4 @@ typedef union Matrix3
     double m[3][3];
 } Matrix3;
 
-#endif // ORBIT_MATH_TYPES_H
+#endif // VEC_MATH_TYPES_H

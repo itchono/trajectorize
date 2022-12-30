@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from trajectorize.math_lib.math_interfaces import np_array_from_vec3
+
 
 @dataclass
 class StateVector:
@@ -10,15 +12,7 @@ class StateVector:
     time: float
 
     @classmethod
-    def from_cdata(cls: "StateVector", cdata):
-
-        position = np.zeros(3)
-        velocity = np.zeros(3)
-
-        for i in range(3):
-            position[i] = cdata.position.v[i]
-            velocity[i] = cdata.velocity.v[i]
-
-        return StateVector(position,
-                           velocity,
-                           time=cdata.time)
+    def from_c_data(cls: "StateVector", cdata):
+        return cls(np_array_from_vec3(cdata.position),
+                   np_array_from_vec3(cdata.velocity),
+                   time=cdata.time)

@@ -1,4 +1,4 @@
-#include "orbit_math.h"
+#include "vec_math.h"
 
 #ifndef _ROTATIONS_H
 #define _ROTATIONS_H
