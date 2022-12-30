@@ -169,4 +169,4 @@ class Body:
 def state_vector_at_time(t: float, parent: BodyEnum,
                          child: BodyEnum) -> StateVector:
     cdata = lib.get_rel_state_at_time(t, parent.value, child.value)
-    return StateVector.from_cdata(cdata)
+    return StateVector.from_c_data(cdata)

@@ -9,7 +9,7 @@
 #endif // M_PI
 
 #define ATOL (1e-12)
-#define MAX_ITER (100)
+#define MAX_ITER (150)
 #define NEWTON_SWITCHOVER_POINT (1e-4)
 
 double func_y(double z, double r1, double r2, double A)
@@ -71,8 +71,8 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum Traje
     // Strategy
     // 1. Find a bracket for the sign change point
     // 2. Switch over to Newton's method when the bracket is sufficiently small
-    double a = -50;
-    double b = 50;
+    double a = -100;
+    double b = 100;
     double z = (a + b) / 2;
 
     for (int i = 0; i < MAX_ITER; i++)

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from trajectorize.orbit.universal_kepler import UniversalKeplerOrbit
+from trajectorize.visualizers.display_utils import display_or_save_plot
 
 if __name__ == "__main__":
     r0 = np.array([7000, -12124, 0])
@@ -55,12 +56,4 @@ if __name__ == "__main__":
     axes[3].set_xlabel("Mission Time (s)")
 
     fig.suptitle("Universal Keplerian Elements Demo")
-
-    # Determine backend; if GUI, show plot, else save to file
-
-    # Agg backend is used for non-GUI environments
-    if plt.get_backend() == "agg":
-        plt.savefig("orbit.png")
-        print("Non-GUI backend detected. Plot saved to orbit.png")
-    else:
-        plt.show()
+    display_or_save_plot("orbit.png")

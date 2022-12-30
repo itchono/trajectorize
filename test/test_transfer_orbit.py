@@ -1,7 +1,7 @@
 import numpy as np
 
-from trajectorize.trajectory.transfer_orbit import solve_lambert_problem, \
-    TrajectoryDirection
+from trajectorize.trajectory.transfer_orbit import (TrajectoryDirection,
+                                                    solve_lambert_problem)
 
 
 def test_orbit_determination():

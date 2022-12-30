@@ -1,8 +1,9 @@
-from matplotlib.artist import Artist
 import numpy as np
+from matplotlib.artist import Artist
 from matplotlib.axes import Axes
-from trajectorize.trajectory.transfer_orbit import planetary_transfer_orbit
+
 from trajectorize.ephemeris.kerbol_system import Body
+from trajectorize.trajectory.transfer_orbit import planetary_transfer_orbit
 from trajectorize.visualizers.celestial_body_plot import plot_body_rel_kerbol
 
 

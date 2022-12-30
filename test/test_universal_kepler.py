@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from trajectorize.orbit.universal_kepler import UniversalKeplerOrbit
 
 

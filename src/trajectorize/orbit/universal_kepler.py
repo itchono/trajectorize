@@ -5,9 +5,9 @@ from dataclasses import dataclass
 import numpy as np
 
 from trajectorize._c_extension import ffi, lib
+from trajectorize.c_ext_utils.process_sva_buffer import process_sva_buffer
 from trajectorize.math_lib.math_interfaces import (np_array_from_vec3,
                                                    vec3_from_np_array)
-from trajectorize.c_ext_utils.process_sva_buffer import process_sva_buffer
 
 
 @dataclass

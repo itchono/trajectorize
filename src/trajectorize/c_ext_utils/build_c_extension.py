@@ -1,4 +1,5 @@
 import sys
+
 from cffi import FFI
 
 include_dir = "include" if __name__ != "__main__" else "../include"
@@ -39,7 +40,7 @@ Generally, the order is:
 This is because header files further down the list may depend on types defined
 upstream.
 '''
-ffi.cdef(read_and_cleanse_many_headers("orbit_math_types.h",
+ffi.cdef(read_and_cleanse_many_headers("vec_math_types.h",
                                        "state_vector_types.h",
                                        "keplerian_element_types.h",
                                        "kerbol_system_types.h",
@@ -48,7 +49,8 @@ ffi.cdef(read_and_cleanse_many_headers("orbit_math_types.h",
                                        "conic_kepler.h",
                                        "universal_kepler.h",
                                        "lambert.h",
-                                       "transfer_orbit.h"))
+                                       "transfer_orbit.h",
+                                       "delta_v_estimate.h"))
 
 '''
 Determine compiler flags and linker args depending on platform.
@@ -81,6 +83,7 @@ ffi.set_source("trajectorize._c_extension",
                #include "universal_kepler.h"
                #include "lambert.h"
                #include "transfer_orbit.h"
+               #include "delta_v_estimate.h"
                ''',
                sources=[f"{src_path}/math_lib/orbit_math.c",
                         f"{src_path}/math_lib/rotations.c",
@@ -90,7 +93,8 @@ ffi.set_source("trajectorize._c_extension",
                         f"{src_path}/orbit/conic_kepler.c",
                         f"{src_path}/orbit/universal_kepler.c",
                         f"{src_path}/trajectory/lambert.c",
-                        f"{src_path}/trajectory/transfer_orbit.c"],
+                        f"{src_path}/trajectory/transfer_orbit.c",
+                        f"{src_path}/trajectory/delta_v_estimate.c"],
                include_dirs=[include_dir],
                extra_compile_args=extra_compile_args)
 

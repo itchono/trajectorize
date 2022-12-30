@@ -52,3 +52,18 @@ def test_ke_from_state_vector():
     assert orbit.ke.argument_of_periapsis == pytest.approx(
         np.deg2rad(20.07), rel=1e-4)
     assert orbit.ke.true_anomaly == pytest.approx(np.deg2rad(28.45), rel=1e-3)
+
+
+def test_state_vector_from_ke():
+    # Using Curtis example 4.3
+    position = np.array([-6045, -3490, 2500])*1e3
+    velocity = np.array([-3.457, 6.618, 2.533])*1e3
+
+    orbit = conic_kepler.KeplerianOrbit.from_state_vector(position,
+                                                          velocity,
+                                                          0,
+                                                          EARTH_SI)
+
+    sv = orbit.state_vector
+    assert np.allclose(sv.position, position)
+    assert np.allclose(sv.velocity, velocity)

@@ -61,4 +61,4 @@ Right now, full functionality is incomplete. There are, however, some cool demos
 # Inspirations
 
 * [Interactive illustrated interplanetary guide and calculator for KSP](https://ksp.olex.biz/), by Olex
-* [AlexMoon's Hohmann Transfer Calculator](https://alexmoon.github.io/ksp/), by AlexMoon
+* [Launch Window Planner](https://alexmoon.github.io/ksp/), by AlexMoon

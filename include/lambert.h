@@ -9,7 +9,7 @@ This header file contains definitions for Lambert's Problem
 #ifndef LAMBERT_H
 #define LAMBERT_H
 
-#include "orbit_math_types.h"
+#include "vec_math_types.h"
 
 typedef struct LambertSolution
 {

@@ -3,6 +3,7 @@
 #include "kerbol_system_bodies.h"
 #include "lambert.h"
 #include "conic_kepler.h"
+#include "vec_math.h"
 
 #include <stdio.h>
 
@@ -37,4 +38,19 @@ KeplerianElements planetary_transfer_orbit(Body body1, Body body2, double t1, do
     // Generate the transfer orbit
     KeplerianElements ke = ke_from_state_vector(b1t1_transfer, parent.mu);
     return ke;
+}
+
+Vector3 excess_velocity_at_body(Body body, KeplerianElements transfer_orbit, double ut)
+{
+    // Calculate the excess velocity at a body given a transfer orbit
+    // Excess velocity is the velocity of the transfer orbit relative to the body
+    StateVector body_state = get_rel_state_at_time(ut, body.parent_id, body.body_id);
+    Body parent = kerbol_system_bodies[body.parent_id];
+
+    // Ensure that we are evaluating state at time ut
+    KeplerianElements orbit_ke = ke_orbit_prop(ut, transfer_orbit, parent.mu);
+    StateVector transfer_state = state_vector_from_ke(orbit_ke, parent.mu);
+
+    Vector3 excess_velocity = vec_sub(transfer_state.velocity, body_state.velocity);
+    return excess_velocity;
 }

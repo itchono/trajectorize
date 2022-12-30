@@ -1,5 +1,5 @@
-from matplotlib.axes import Axes
 from matplotlib.artist import Artist
+from matplotlib.axes import Axes
 
 from trajectorize.ephemeris.kerbol_system import (Body, BodyEnum,
                                                   state_vector_at_time)

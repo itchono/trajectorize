@@ -4,10 +4,10 @@ from dataclasses import dataclass
 import numpy as np
 
 from trajectorize._c_extension import ffi, lib
-from trajectorize.ephemeris.kerbol_system import (Body,
-                                                  PlanetaryKeplerianElements)
-from trajectorize.math_lib.math_interfaces import vec3_from_np_array
 from trajectorize.c_ext_utils.process_sva_buffer import process_sva_buffer
+from trajectorize.ephemeris.kerbol_system import Body
+from trajectorize.ephemeris.state_vector import StateVector
+from trajectorize.math_lib.math_interfaces import vec3_from_np_array
 
 
 @dataclass
@@ -94,9 +94,15 @@ class KeplerianOrbit:
             'time': epoch
         })[0]
 
-        ke = lib.ke_from_state_vector(state_vec, parent_body.mu)
+        ke = KeplerianElements.from_c_data(
+            lib.ke_from_state_vector(state_vec, parent_body.mu))
 
         return cls(ke, parent_body)
+
+    @property
+    def state_vector(self):
+        sv_c = lib.state_vector_from_ke(self.ke.c_data, self.parent_body.mu)
+        return StateVector.from_c_data(sv_c)
 
     def propagate(self, t: float) -> "KeplerianOrbit":
         sol = lib.ke_orbit_prop(t, self.ke.c_data, self.parent_body.mu)

@@ -16,6 +16,9 @@ double orbital_period(double semi_major_axis, double mu);
 double theta_from_E(double E, double e);
 double E_from_M(double M, double e);     // Kepler's equation
 double theta_from_M(double M, double e); // Kepler's equation, but with theta instead of E
+double E_from_theta(double theta, double e);
+double M_from_theta(double theta, double e);
+double M_from_E(double E, double e);
 
 KeplerianElements ke_from_state_vector(StateVector state_vector, double mu);
 StateVector state_vector_from_ke(KeplerianElements orbit, double mu);
