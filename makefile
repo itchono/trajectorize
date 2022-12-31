@@ -13,3 +13,10 @@ clean:
 	find src/trajectorize/ -name "*.o" -delete
 	find src/trajectorize/ -name "*.so" -delete
 	find src/trajectorize/ -name "_c_*.c" -delete
+
+clean_pybuild:
+# remove python build files
+	rm -rf build/
+	rm -rf dist/
+	rm -rf src/trajectorize.egg-info/
+	rm src/trajectorize/_version.py
