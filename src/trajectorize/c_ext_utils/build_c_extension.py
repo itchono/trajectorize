@@ -1,4 +1,5 @@
 import sys
+import glob
 
 from cffi import FFI
 
@@ -20,10 +21,7 @@ def read_and_cleanse_header(filename: str) -> str:
 
 
 def read_and_cleanse_many_headers(*filenames: str) -> str:
-    '''
-    Utility function for reading and cleansing multiple header files,
-    joining them into a single string suitable for cffi.cdef().
-    '''
+    # Used to join into a cdef string
     return ''.join([read_and_cleanse_header(filename)
                    for filename in filenames])
 
@@ -52,49 +50,31 @@ ffi.cdef(read_and_cleanse_many_headers("vec_math_types.h",
                                        "transfer_orbit.h",
                                        "delta_v_estimate.h"))
 
-'''
-Determine compiler flags and linker args depending on platform.
-
-GCC options
--std=c99: Use C99 standard
--lm: Link math library
--lc: Link C standard library
--march=native: Optimize for the current CPU
--O3: Optimize for speed
-
-MSVC options
-
-
-Compiler type is determined by the value of sys.platform.
-'''
-if sys.platform == "linux" or sys.platform == "linux2":
+if sys.platform.startswith("linux"):
     # linux
     extra_compile_args = ["-std=c99", "-lm", "-lc", "-O3"]
 else:
     # MSVC is already c99 compliant, so no need to specify
     extra_compile_args = None
 
-# Include only the top-level header files.
+# Include all source files under src/trajectorize
+# except those starting with "_" (generated code files)
+sources = glob.glob(f"{src_path}/**/[!_]*.c")
+
+# This exposes all symbols in the header files to the C extension
+# it helps facilitate testing, but may be overwhelming for production
+# (may want to change this in the future)
+
+# remove anything in front of a slash, e.g. "include/vec_math.h" -> "vec_math.h"
+# delimiter for windows vs unix
+delimiter = "\\" if sys.platform.startswith("win") else "/"
+
+include_statements = [f'#include "{include_file.split(delimiter)[-1]}"'
+                      for include_file in glob.glob(f"{include_dir}/*.h")]
+
 ffi.set_source("trajectorize._c_extension",
-               '''
-               #include "kerbol_system_bodies.h"
-               #include "kerbol_system_ephemeris.h"
-               #include "conic_kepler.h"
-               #include "universal_kepler.h"
-               #include "lambert.h"
-               #include "transfer_orbit.h"
-               #include "delta_v_estimate.h"
-               ''',
-               sources=[f"{src_path}/math_lib/orbit_math.c",
-                        f"{src_path}/math_lib/rotations.c",
-                        f"{src_path}/math_lib/stumpuff_functions.c",
-                        f"{src_path}/ephemeris/kerbol_system_bodies.c",
-                        f"{src_path}/ephemeris/kerbol_system_ephemeris.c",
-                        f"{src_path}/orbit/conic_kepler.c",
-                        f"{src_path}/orbit/universal_kepler.c",
-                        f"{src_path}/trajectory/lambert.c",
-                        f"{src_path}/trajectory/transfer_orbit.c",
-                        f"{src_path}/trajectory/delta_v_estimate.c"],
+               "\n".join(include_statements),
+               sources=sources,
                include_dirs=[include_dir],
                extra_compile_args=extra_compile_args)
 
