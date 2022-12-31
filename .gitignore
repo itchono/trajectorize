@@ -137,3 +137,7 @@ dmypy.json
 
 # Versioning from setuptools_scm
 src/trajectorize/_version.py
+
+# Browser interface
+*.wasm
+src/browser_interface/*.js
