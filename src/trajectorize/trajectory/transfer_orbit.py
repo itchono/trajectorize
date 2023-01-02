@@ -83,7 +83,7 @@ def trajectory_ejection_dv(t1: float, t2: float,
         excess_speed = np.linalg.norm(excess_velocity)
         delta_v = estimate_delta_v(
             body1, excess_speed,
-            orbit.ke.semi_major_axis + parking_orbit_alt)
+            body1.radius + parking_orbit_alt)
         return delta_v
     except Exception:
         return np.nan
