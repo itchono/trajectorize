@@ -119,8 +119,3 @@ class KeplerianOrbit:
 
         arr = process_sva_buffer(prop_orbit, len(times))
         return arr[:, 0:3]
-
-
-def solve_kepler_equation(M: float, e: float) -> float:
-    result: float = lib.E_from_M(M, e)
-    return result

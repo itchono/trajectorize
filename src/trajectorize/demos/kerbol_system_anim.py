@@ -6,6 +6,7 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 
 from trajectorize.ephemeris.kerbol_system import (Body, BodyEnum,
                                                   state_vector_at_time)
+from trajectorize.ksp_time.time_conversion import TimeType, direct_ut_to_string
 
 if __name__ == "__main__":
 
@@ -15,7 +16,7 @@ if __name__ == "__main__":
     Command Line Options
 
     --save: Save the animation to a file
-    --length: Length of the animation in years (each year is 426.08 Kerbin days)
+    --length: Length of the animation in years (each year is 426 Kerbin days)
     '''
     parser.add_argument("--save", action="store_true",
                         help="Save the animation to a file")
@@ -23,7 +24,7 @@ if __name__ == "__main__":
         "--length",
         type=int,
         default=10,
-        help="Length of the animation in years (each year is 426.08 Kerbin days)")
+        help="Length of the animation in years (each year is 426 Kerbin days)")
 
     args = parser.parse_args()
 
@@ -31,14 +32,15 @@ if __name__ == "__main__":
     save_anim = args.save
 
     KERBIN_DAY = 21600
-    KERBIN_YEAR = 426.08 * KERBIN_DAY
+    KERBIN_YEAR = 426 * KERBIN_DAY
 
     # Generate animated frames
     t_ut = np.linspace(0, KERBIN_YEAR * years, 500)
 
     plt.style.use('dark_background')
 
-    figsize = (3.5, 3.5) if save_anim else (8, 7)
+    # figsize = (3.5, 3.5) if save_anim else (8, 7)
+    figsize = (8, 7)
 
     fig, ax = plt.subplots(figsize=figsize)
 
@@ -46,8 +48,8 @@ if __name__ == "__main__":
 
     # place title inside the axes so it can blit
     title = ax.set_title(
-        f"Kerbol System, UT = {round(t_ut[0]/KERBIN_DAY)}d",
-        y=0.8, x=0.5, fontsize=10)
+        f"Kerbol System, {direct_ut_to_string(t_ut[0], TimeType.KERBIN_TIME)}",
+        y=0.8, x=0.5, fontsize=12)
 
     ax.set_axis_off()
     ax.set_aspect('equal')
@@ -87,7 +89,8 @@ if __name__ == "__main__":
             planet_artists[j].set_data(planet_ephemerides[i][j].position[0],
                                        planet_ephemerides[i][j].position[1])
 
-        title.set_text(f"Kerbol System, UT = {round(t_ut[i]/KERBIN_DAY)}d")
+        title.set_text(
+            f"Kerbol System, {direct_ut_to_string(t_ut[i], TimeType.KERBIN_TIME)}")
 
         return planet_artists + [title]
 
@@ -105,4 +108,4 @@ if __name__ == "__main__":
         writer = PillowWriter(fps=30,
                               metadata=dict(artist='Me'),
                               bitrate=50)
-        animation.save('kerbol_system.gif', writer=writer)
+        animation.save('kerbol_system_raw.gif', writer=writer)
