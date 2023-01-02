@@ -45,8 +45,6 @@ def process_and_join_headers(*filenames: str) -> str:
                 if line.startswith("#include"):
                     try:
                         include_filename = line.split('"')[1]
-                        if include_filename in already_processed:
-                            continue
                         clean_string = process_single_file(
                             include_filename) + clean_string
                     except IndexError:  # e.g. system header

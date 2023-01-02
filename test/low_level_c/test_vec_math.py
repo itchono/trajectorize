@@ -42,6 +42,11 @@ def test_normalize():
     assert a_normalized_np == pytest.approx(np_array_from_vec3(a_normalized))
 
 
+def test_vec_zero():
+    vec_zero = np_array_from_vec3(lib.vec_zero())
+    assert vec_zero == pytest.approx(np.zeros_like(vec_zero))
+
+
 def test_vec3_from_np_array():
     assert a_c.x == a[0]
     assert a_c.y == a[1]
@@ -60,3 +65,11 @@ def test_vec_sub():
     c = np_array_from_vec3(c_c)
 
     assert c == pytest.approx(a - b)
+
+
+def test_vec_mul_scalar():
+    s = 5
+    c_c = lib.vec_mul_scalar(s, a_c)
+    c = np_array_from_vec3(c_c)
+
+    assert c == pytest.approx(s*a)

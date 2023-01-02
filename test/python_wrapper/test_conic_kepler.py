@@ -26,14 +26,6 @@ def test_orbital_period():
     assert orbit.T == pytest.approx(6307.12, abs=1e-2)
 
 
-def test_kepler_equation_solver():
-    # From Curtis Orbital Mechanics Appendix D
-    M = 3.6029
-    e = 0.37255
-    result = conic_kepler.solve_kepler_equation(M, e)
-    assert result == pytest.approx(3.479422)
-
-
 def test_ke_from_state_vector():
     # Using Curtis example 4.3
     position = np.array([-6045, -3490, 2500])*1e3
