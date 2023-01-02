@@ -64,7 +64,7 @@ class KSPTime:
         return ffi.string(buf).decode('utf-8')
 
 
-def direct_ut_to_string(ut: float, time_type: TimeType) -> str:
+def ut_to_ut_string(ut: float, time_type: TimeType) -> str:
     # For faster conversion
 
     # create string buffer to hold result

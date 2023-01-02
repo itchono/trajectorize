@@ -1,10 +1,9 @@
-import pytest
 import numpy as np
+import pytest
 
-from trajectorize.math_lib.math_interfaces import vec3_from_np_array, \
-    np_array_from_vec3
 from trajectorize._c_extension import ffi, lib
-
+from trajectorize.math_lib.math_interfaces import (np_array_from_vec3,
+                                                   vec3_from_np_array)
 
 # initialize some test vectors
 # a = [1, 2, 3]
