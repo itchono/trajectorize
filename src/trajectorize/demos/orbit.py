@@ -56,4 +56,4 @@ if __name__ == "__main__":
     axes[3].set_xlabel("Mission Time (s)")
 
     fig.suptitle("Universal Keplerian Elements Demo")
-    display_or_save_plot("orbit.png")
+    display_or_save_plot("orbit_universal.png")
