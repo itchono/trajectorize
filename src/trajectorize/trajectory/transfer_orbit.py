@@ -19,7 +19,10 @@ def planetary_transfer_orbit(body1: Body, body2: Body, t1: float, t2: float) \
     parent = Body.from_identifier(body1.parent_id)
     sol = lib.planetary_transfer_orbit(body1.c_data, body2.c_data, t1, t2)
 
-    ke = KeplerianElements.from_c_data(sol)
+    if not sol.valid:
+        return None
+
+    ke = KeplerianElements.from_c_data(sol.ke)
     orbit = KeplerianOrbit(ke, parent)
     return orbit
 
@@ -76,17 +79,18 @@ def trajectory_ejection_dv(t1: float, t2: float,
         e.g. for Kerbin, it's about 70 km for an ideal orbit just outside
         the atmosphere.
     '''
-    try:
-        orbit = planetary_transfer_orbit(
-            body1, body2, t1, t2)
-        excess_velocity = get_excess_velocity(body1, orbit, t1)
-        excess_speed = np.linalg.norm(excess_velocity)
-        delta_v = estimate_delta_v(
-            body1, excess_speed,
-            body1.radius + parking_orbit_alt)
-        return delta_v
-    except Exception:
+    transfer_orbit = planetary_transfer_orbit(
+        body1, body2, t1, t2)
+
+    if transfer_orbit is None:
         return np.nan
+
+    excess_velocity = get_excess_velocity(body1, transfer_orbit, t1)
+    excess_speed = np.linalg.norm(excess_velocity)
+    delta_v = estimate_delta_v(
+        body1, excess_speed,
+        body1.radius + parking_orbit_alt)
+    return delta_v
 
 
 # standalone test

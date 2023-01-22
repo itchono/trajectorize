@@ -82,17 +82,17 @@ def porkchop_plot_ejection(body1: Body, body2: Body, ax: Axes,
     t1_kerbin_days = t1 / 21600
     tof_kerbin_days = tof / 21600
 
-    disp_percentile_max = 80
+    disp_percentile_max = 95
 
     # plot the porkchop plot
     mesh = ax.pcolormesh(t1_kerbin_days, tof_kerbin_days, dv, cmap="jet",
                          shading="gouraud", vmin=min(dvs),
-                         vmax=np.percentile(dvs, disp_percentile_max))
+                         vmax=np.nanpercentile(dvs, disp_percentile_max))
     # ax.fmt_xdata = UTFormatter(TimeType.KERBIN_TIME)
 
     # add colorbar
     tick_marks = np.linspace(
-        min(dvs), np.percentile(dvs, disp_percentile_max), 10)
+        min(dvs), np.nanpercentile(dvs, disp_percentile_max), 10)
     colorbar = ax.figure.colorbar(mesh, ax=ax, fraction=0.05, extend='max')
     colorbar.set_ticks(tick_marks)
 

@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 
-KeplerianElements planetary_transfer_orbit(Body body1, Body body2, double t1, double t2)
+TransferOrbit planetary_transfer_orbit(Body body1, Body body2, double t1, double t2)
 {
     // Calculates a transfer orbit from body1 to body2 at time t1 to arrive at body2 at time t2
     // Keplerian elements are given in terms of the common parent body at time t1
@@ -16,7 +16,7 @@ KeplerianElements planetary_transfer_orbit(Body body1, Body body2, double t1, do
     if (body1.parent_id != body2.parent_id)
     {
         fprintf(stderr, "Error: Bodies do not have a common parent.\n");
-        return (KeplerianElements){0};
+        return (TransferOrbit){.valid = false, .ke = {0}};
     }
 
     Body parent = kerbol_system_bodies[body1.parent_id];
@@ -29,6 +29,11 @@ KeplerianElements planetary_transfer_orbit(Body body1, Body body2, double t1, do
     enum TrajectoryType type = PROGRADE;
     LambertSolution sol = lambert(b1t1.position, b2t2.position, t2 - t1, parent.mu, type);
 
+    if (!sol.valid)
+    {
+        return (TransferOrbit){.valid = false, .ke = {0}};
+    }
+
     // Get velocity at time t1 and construct state vector of transfer orbit at t1
 
     StateVector b1t1_transfer = {.position = b1t1.position,
@@ -37,7 +42,7 @@ KeplerianElements planetary_transfer_orbit(Body body1, Body body2, double t1, do
 
     // Generate the transfer orbit
     KeplerianElements ke = ke_from_state_vector(b1t1_transfer, parent.mu);
-    return ke;
+    return (TransferOrbit){.valid = true, .ke = ke};
 }
 
 Vector3 excess_velocity_at_body(Body body, KeplerianElements transfer_orbit, double ut)

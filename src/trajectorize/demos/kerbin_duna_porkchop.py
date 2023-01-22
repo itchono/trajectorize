@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots(figsize=(8, 7))
     porkchop_plot_ejection(kerbin, duna, ax, t1_min,
-                           t1_max, tof_min, tof_max, 70000,
+                           t1_max, tof_min, tof_max, 100000,
                            n_grid=200)
 
     display_or_save_plot("kerbin_duna_porkchop.png")

@@ -38,9 +38,9 @@ GridSearchResult ejection_dv(GridSearchProblem problem)
 
             double t2 = t1 + tof;
 
-            KeplerianElements ke = planetary_transfer_orbit(problem.body1,
-                                                            problem.body2, t1, t2);
-            Vector3 xs_vel = excess_velocity_at_body(problem.body1, ke, t1);
+            TransferOrbit to = planetary_transfer_orbit(problem.body1,
+                                                        problem.body2, t1, t2);
+            Vector3 xs_vel = excess_velocity_at_body(problem.body1, to.ke, t1);
             double xs_spd = vec_norm(xs_vel);
 
             double eff_pe = problem.r_pe_1 + problem.body1.radius;

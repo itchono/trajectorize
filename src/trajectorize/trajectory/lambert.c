@@ -8,9 +8,9 @@
 #define M_PI 3.14159265358979323846
 #endif // M_PI
 
-#define ATOL (1e-12)
-#define MAX_ITER (150)
-#define NEWTON_SWITCHOVER_POINT (1e-4)
+#define ATOL (1e-6)
+#define MAX_ITER (500)
+#define NEWTON_SWITCHOVER_POINT (1e-2)
 
 double func_y(double z, double r1, double r2, double A)
 {
@@ -75,6 +75,8 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum Traje
     double b = 100;
     double z = (a + b) / 2;
 
+    double dz = 2 * ATOL;
+
     for (int i = 0; i < MAX_ITER; i++)
     {
         double F = func_F(z, dt, r1, r2, A, mu);
@@ -95,10 +97,11 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum Traje
         {
             // Newton Iteration
             double F_z = deriv_F_z(z, r1, r2, A, mu);
-            z -= F / F_z;
+            dz = -F / F_z;
+            z += dz;
         }
 
-        if (fabs(F) < ATOL)
+        if (fabs(dz) < ATOL)
         {
             break;
         }
@@ -116,6 +119,8 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum Traje
     // V2 = 1/g * (gdot*R2 - R1)
     Vector3 V2 = vec_mul_scalar(1 / g, vec_sub(vec_mul_scalar(gdot, R2), R1));
 
-    LambertSolution solution = {V1, V2, dt};
+    bool converged = fabs(dz) < ATOL;
+
+    LambertSolution solution = {V1, V2, dt, converged};
     return solution;
 }
