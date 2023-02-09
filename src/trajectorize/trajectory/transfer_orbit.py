@@ -46,6 +46,12 @@ def estimate_delta_v(body: Body, excess_velocity: float,
     return lib.delta_v_req(body.c_data, excess_velocity, periapsis_radius)
 
 
+def approximate_time_of_flight(body1: Body, body2: Body) -> float:
+    if body1.parent != body2.parent:
+        raise ValueError("body1 and body2 must have the same parent.")
+    return lib.approximate_time_of_flight(body1.c_data, body2.c_data)
+
+
 def solve_lambert_problem(r1: np.ndarray, r2: np.ndarray,
                           dt: float, mu: float,
                           direction: TrajectoryDirection) \
@@ -79,6 +85,8 @@ def trajectory_ejection_dv(t1: float, t2: float,
         e.g. for Kerbin, it's about 70 km for an ideal orbit just outside
         the atmosphere.
     '''
+    if body1.parent != body2.parent:
+        raise ValueError("body1 and body2 must have the same parent.")
     transfer_orbit = planetary_transfer_orbit(
         body1, body2, t1, t2)
 

@@ -41,7 +41,8 @@ def porkchop_plot_ejection(ax: Axes,
     # add colorbar
     tick_marks = np.linspace(
         np.nanmin(dvs), np.nanpercentile(dvs, disp_percentile_max), 10)
-    colorbar = ax.figure.colorbar(mesh, ax=ax, fraction=0.05, extend='max')
+    colorbar = ax.figure.colorbar(mesh, ax=ax, fraction=0.05, extend='max',
+                                  label=f"$\Delta v$ cost (m/s)")
     colorbar.set_ticks(tick_marks)
 
     # set the labels

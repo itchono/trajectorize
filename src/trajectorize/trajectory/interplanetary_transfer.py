@@ -50,6 +50,9 @@ def interplanetary_transfer_dv(body1: Body, body2: Body,
         raise ValueError(f"process_count of {process_count} is greater"
                          f" than grid size of {n_grid}, cannot slice"
                          " problem so finely. Use fewer processes.")
+        
+    if body1.parent != body2.parent:
+        raise ValueError("body1 and body2 must have the same parent.")
 
     # Chunk the problem into multiple "strips" of t1 to be solve
     n_grid_t1 = round(n_grid / process_count)

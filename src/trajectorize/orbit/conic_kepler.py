@@ -74,6 +74,20 @@ class KeplerianOrbit:
         arr = process_sva_buffer(state_vec_arr, n)
 
         return arr[:, 0:3]
+    
+    @classmethod
+    def from_celestial_body(cls, body: Body, ut: float):
+        '''
+        Creates a KeplerianOrbit object from a celestial body
+        at some time.
+        '''
+
+        # Use library function: ke_from_pke
+        pke_c = body.orbit.c_data
+
+        ke_c = lib.ke_from_pke(pke_c, ut, body.mu)
+        ke = KeplerianElements.from_c_data(ke_c)
+        return cls(ke, body.parent)
 
     @ property
     def T(self) -> float:

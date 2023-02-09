@@ -7,6 +7,13 @@
 
 #include <stdio.h>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+#ifndef M_PI
+// This macro is here for when the linter doesn't see M_PI defined from math.h
+#define M_PI (3.14159265358979323846)
+#endif // M_PI
+
 TransferOrbit planetary_transfer_orbit(Body body1, Body body2, double t1, double t2)
 {
     // Calculates a transfer orbit from body1 to body2 at time t1 to arrive at body2 at time t2
@@ -58,4 +65,22 @@ Vector3 excess_velocity_at_body(Body body, KeplerianElements transfer_orbit, dou
 
     Vector3 excess_velocity = vec_sub(transfer_state.velocity, body_state.velocity);
     return excess_velocity;
+}
+
+double approximate_time_of_flight(Body body1, Body body2)
+{
+    // Approximates radii of bodies using SMA; this means that the eccentricity of the bodies
+    // is assumed to be almost zero. (This is true for most of KSP)
+
+    // Ensure bodies have a common parent
+    if (body1.parent_id != body2.parent_id)
+    {
+        fprintf(stderr, "Error: Bodies do not have a common parent.\n");
+        return 0;
+    }
+
+    // Get parent body
+    Body parent = kerbol_system_bodies[body1.parent_id];
+
+    return M_PI * sqrt(pow(body1.orbit.semi_major_axis + body2.orbit.semi_major_axis, 3) / (8 * parent.mu));
 }

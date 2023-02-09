@@ -2,28 +2,31 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from trajectorize.ephemeris.kerbol_system import Body
-from trajectorize.visualizers.display_utils import display_or_save_plot
-from trajectorize.visualizers.planetary_transfer_plot import \
-    plot_interplanetary_transfer
-from trajectorize.visualizers.porkchop_plot import porkchop_plot_ejection
 from trajectorize.ksp_time.time_conversion import ut_to_ut_string
+from trajectorize.orbit.conic_kepler import KeplerianOrbit
+from trajectorize.trajectory.transfer_orbit import approximate_time_of_flight
+from trajectorize.visualizers.display_utils import display_or_save_plot
+from trajectorize.visualizers.planetary_transfer_plot import plot_transfer
+from trajectorize.visualizers.porkchop_plot import porkchop_plot_ejection
 
 if __name__ == "__main__":
-    kerbin = Body.from_name("Kerbin")
-    duna = Body.from_name("Duna")
+    body1 = Body.from_name("Kerbin")
+    body2 = Body.from_name("Duna")
 
+    # Use orbital period as heuristic for departure time look range
     t1_min = 0
-    t1_max = 852 * 86400 / 4
-
-    tof_min = 151 * 86400 / 4
-    tof_max = 453 * 86400 / 4
-
+    t1_max = t1_min + KeplerianOrbit.from_celestial_body(body1, 0).T * 2
+    
+    # Use Hohmann transfer heuristic for transfer time
+    tof_approx = approximate_time_of_flight(body1, body2)
+    tof_min = tof_approx/2
+    tof_max = tof_approx*2
     n_grid = 300
 
     plt.style.use('dark_background')
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 7))
-    (dv, t1, tof) = porkchop_plot_ejection(ax1, kerbin, duna,
+    (dv, t1, tof) = porkchop_plot_ejection(ax1, body1, body2,
                                            (t1_min, t1_max),
                                            (tof_min, tof_max),
                                            100000, n_grid)
@@ -43,7 +46,7 @@ if __name__ == "__main__":
         return np.argwhere((np.abs(t1 - event_t1) < grid_spacing_t1)
                                 & (np.abs(tof - event_tof) < grid_spacing_tof))[0]
 
-    def draw_interplanetary_transfer_plot(event_t1: float, event_tof: float):
+    def draw_transfer_plot(event_t1: float, event_tof: float):
         # ax1: Move cursor lines
         # vline, hline are 2 points
         cursor_hline.set_ydata([event_tof, event_tof])
@@ -51,8 +54,8 @@ if __name__ == "__main__":
 
         # ax2: plot interplanetary transfer
         ax2.clear()
-        plot_interplanetary_transfer(
-            kerbin, duna, event_t1, event_t1 + event_tof, ax2)
+        plot_transfer(
+            body1, body2, event_t1, event_t1 + event_tof, ax2)
         
         dv_idx = find_index_from_t1_tof(event_t1, event_tof)
         traj_dv = dv[dv_idx[0], dv_idx[1]]
@@ -65,11 +68,12 @@ if __name__ == "__main__":
         fig.canvas.draw_idle()
 
     # Call the drawing function once for minimum energy trajectory
-    draw_interplanetary_transfer_plot(t1[min_dv_idx], tof[min_dv_idx])
+    draw_transfer_plot(t1[min_dv_idx], tof[min_dv_idx])
 
     # Handler for clicking on the plot
     def onclick(event):
-        draw_interplanetary_transfer_plot(event.xdata, event.ydata)
+        if event.inaxes == ax1:
+            draw_transfer_plot(event.xdata, event.ydata)
     cid = fig.canvas.mpl_connect('button_press_event', onclick)
     
     fig.tight_layout()

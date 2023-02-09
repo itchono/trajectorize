@@ -1,13 +1,14 @@
 import numpy as np
 from matplotlib.artist import Artist
 from matplotlib.axes import Axes
+from matplotlib.lines import Line2D
 
 from trajectorize.ephemeris.kerbol_system import Body
 from trajectorize.trajectory.transfer_orbit import planetary_transfer_orbit
-from trajectorize.visualizers.celestial_body_plot import plot_body_rel_kerbol
+from trajectorize.visualizers.celestial_body_plot import plot_body_rel_parent
 
 
-def plot_transfer_orbit(body1: Body, body2: Body, t1: float, t2: float,
+def plot_transfer_orbit_path(body1: Body, body2: Body, t1: float, t2: float,
                         ax: Axes,
                         plot_full_orbit: bool = False) -> "tuple(Artist)":
     '''
@@ -43,22 +44,31 @@ def plot_transfer_orbit(body1: Body, body2: Body, t1: float, t2: float,
     return path
 
 
-def plot_interplanetary_transfer(body1: Body, body2: Body, t1: float,
+def plot_transfer(body1: Body, body2: Body, t1: float,
                                  t2: float, ax: Axes) -> None:
 
     # Get transfer orbit
-    plot_transfer_orbit(body1, body2, t1, t2, ax)
+    plot_transfer_orbit_path(body1, body2, t1, t2, ax)
 
     # Plot planets
-    plot_body_rel_kerbol(body1, t1, ax, plot_orbit=True,
+    plot_body_rel_parent(body1, t1, ax, plot_orbit=True,
                          marker_str="o", markersize=10)
-    plot_body_rel_kerbol(body1, t2, ax, plot_orbit=False,
+    plot_body_rel_parent(body1, t2, ax, plot_orbit=False,
                          marker_str="D", markersize=10)
-    plot_body_rel_kerbol(body2, t1, ax, plot_orbit=True,
+    plot_body_rel_parent(body2, t1, ax, plot_orbit=True,
                          marker_str="o", markersize=10)
-    plot_body_rel_kerbol(body2, t2, ax, plot_orbit=False,
+    plot_body_rel_parent(body2, t2, ax, plot_orbit=False,
                          marker_str="D", markersize=10)
-    plot_body_rel_kerbol(body1.parent, t1, ax, markersize=10)
+    
+    # Plot central body
+    ax.plot(0, 0, 'o', markersize=10, color=body1.parent.colour_hex)
+    
+    # Plot custom legend; label circle marker = t1, label diamond marker = t2
+    legend_elements = [Line2D([0], [0], marker='o', markerfacecolor='w', lw=0,
+                              label=f'Positions at {body1.name} Departure'),
+                       Line2D([0], [0], marker='D', markerfacecolor='w', lw=0,
+                              label=f'Positions at {body2.name} Arrival')]
+    ax.legend(handles=legend_elements, loc=(0.5, -0.1))
 
     # Styling
     ax.set_axis_off()
