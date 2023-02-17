@@ -2,11 +2,13 @@ from enum import IntEnum
 
 import numpy as np
 
-from trajectorize._c_extension import lib
-from trajectorize.ephemeris.kerbol_system import Body
+from trajectorize._c_extension import ffi, lib
+from trajectorize.ephemeris.kerbol_system import Body, BodyEnum
 from trajectorize.math_lib.math_interfaces import (np_array_from_vec3,
                                                    vec3_from_np_array)
 from trajectorize.orbit.conic_kepler import KeplerianElements, KeplerianOrbit
+
+from dataclasses import dataclass
 
 
 class TrajectoryDirection(IntEnum):
@@ -14,20 +16,53 @@ class TrajectoryDirection(IntEnum):
     RETROGRADE = lib.RETROGRADE
 
 
+class ArrivalDeparture(IntEnum):
+    ARRIVAL = lib.ARRIVAL
+    DEPARTURE = lib.DEPARTURE
+
+
+@dataclass
+class TransferOrbit:
+    '''
+    Equivalent to C TransferOrbit struct
+    '''
+    ke: KeplerianElements
+    valid: bool
+    t1: float
+    t2: float
+    body1: Body
+    body2: Body
+
+    @classmethod
+    def from_c_data(cls, c_data):
+        ke = KeplerianElements.from_c_data(c_data.ke)
+        return cls(ke, c_data.valid, c_data.t1, c_data.t2,
+                   Body.from_identifier(BodyEnum(c_data.body1.body_id)),
+                   Body.from_identifier(BodyEnum(c_data.body2.body_id)))
+
+    @property
+    def c_data(self):
+        return ffi.new("struct TransferOrbit *", {
+            "ke": self.ke.c_data,
+            "valid": self.valid,
+            "t1": self.t1,
+            "t2": self.t2,
+            "body1": self.body1.c_data,
+            "body2": self.body2.c_data
+        })[0]
+
+
 def planetary_transfer_orbit(body1: Body, body2: Body, t1: float, t2: float) \
-        -> KeplerianOrbit:
-    parent = Body.from_identifier(body1.parent_id)
+        -> TransferOrbit:
     sol = lib.planetary_transfer_orbit(body1.c_data, body2.c_data, t1, t2)
 
     if not sol.valid:
         return None
-
-    ke = KeplerianElements.from_c_data(sol.ke)
-    orbit = KeplerianOrbit(ke, parent)
-    return orbit
+    return TransferOrbit.from_c_data(sol)
 
 
-def get_excess_velocity(body: Body, orbit: KeplerianOrbit, time: float) \
+def get_excess_velocity(transfer_orbit: TransferOrbit,
+                        arrival_or_departure: ArrivalDeparture) \
         -> np.ndarray:
     '''
     Gets the excess velocity between the transfer orbit and a celestial
@@ -35,15 +70,18 @@ def get_excess_velocity(body: Body, orbit: KeplerianOrbit, time: float) \
     Used to patch the transfer orbit into the body orbit.
     '''
     return np_array_from_vec3(
-        lib.excess_velocity_at_body(body.c_data, orbit.ke.c_data, time))
+        lib.excess_velocity_at_body(transfer_orbit.c_data,
+                                    arrival_or_departure.value))
 
 
-def estimate_delta_v(body: Body, excess_velocity: float,
-                     periapsis_radius: float) -> float:
+def ejection_capture_dv(body: Body, excess_velocity: np.ndarray,
+                        periapsis_radius: float) -> float:
     '''
     Estimates the delta-v required to patch the transfer orbit into the body orbit.
     '''
-    return lib.delta_v_req(body.c_data, excess_velocity, periapsis_radius)
+    return lib.ejection_capture_dv(body.c_data,
+                                   vec3_from_np_array(excess_velocity),
+                                   periapsis_radius)
 
 
 def approximate_time_of_flight(body1: Body, body2: Body) -> float:
@@ -94,9 +132,8 @@ def trajectory_ejection_dv(t1: float, t2: float,
         return np.nan
 
     excess_velocity = get_excess_velocity(body1, transfer_orbit, t1)
-    excess_speed = np.linalg.norm(excess_velocity)
-    delta_v = estimate_delta_v(
-        body1, excess_speed,
+    delta_v = ejection_capture_dv(
+        body1, excess_velocity,
         body1.radius + parking_orbit_alt)
     return delta_v
 
@@ -111,14 +148,21 @@ if __name__ == "__main__":
     t2 = 10679760
 
     transfer_orbit = planetary_transfer_orbit(kerbin, duna, t1, t2)
-    kerbin_excess_velocity = get_excess_velocity(kerbin, transfer_orbit, t1)
+    kerbin_excess_velocity = get_excess_velocity(
+        transfer_orbit, ArrivalDeparture.DEPARTURE)
 
     v_inf_kerbin = np.linalg.norm(kerbin_excess_velocity)
-    v_inf_duna = np.linalg.norm(get_excess_velocity(duna, transfer_orbit, t2))
+
+    duna_excess_velocity = get_excess_velocity(
+        transfer_orbit, ArrivalDeparture.ARRIVAL)
+
+    v_inf_duna = np.linalg.norm(duna_excess_velocity)
+
     r_pe_kerbin = kerbin.radius + 70000  # 70 km parking orbit
-    dv_est_kerbin = estimate_delta_v(kerbin, v_inf_kerbin, r_pe_kerbin)
+    dv_est_kerbin = ejection_capture_dv(
+        kerbin, kerbin_excess_velocity, r_pe_kerbin)
     r_pe_duna = duna.radius + 50000  # 50 km target orbit
-    dv_est_duna = estimate_delta_v(duna, v_inf_duna, r_pe_duna)
+    dv_est_duna = ejection_capture_dv(duna, duna_excess_velocity, r_pe_duna)
 
     print(f"Estimated ejection delta-v: {dv_est_kerbin:.2f} m/s")
     print(f"C3 wrt Kerbin: {v_inf_kerbin**2/1e6:.2f} km^2/s^2")

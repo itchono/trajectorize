@@ -64,6 +64,26 @@ class KSPTime:
         return ffi.string(buf).decode('utf-8')
 
 
+def interval_to_delta_string(interval: float,
+                             time_type: TimeType = TimeType.KERBIN_TIME) -> str:
+    '''
+    Convert a time interval in seconds into a formatted string.
+
+    Parameters
+    ----------
+    interval: float
+        time interval in seconds
+    time_type: TimeType
+        Kerbin time or Earth time
+    '''
+    # create string buffer to hold result
+    buf = ffi.new('char[]', 100)
+    lib.get_delta_time_string(lib.ksp_time_from_ut(interval, time_type),
+                              buf, 100)
+
+    return ffi.string(buf).decode('utf-8')
+
+
 def ut_to_ut_string(ut: float, time_type: TimeType = TimeType.KERBIN_TIME,
                     day_only: bool = False) -> str:
     '''

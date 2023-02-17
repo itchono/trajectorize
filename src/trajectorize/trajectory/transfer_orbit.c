@@ -23,7 +23,7 @@ TransferOrbit planetary_transfer_orbit(Body body1, Body body2, double t1, double
     if (body1.parent_id != body2.parent_id)
     {
         fprintf(stderr, "Error: Bodies do not have a common parent.\n");
-        return (TransferOrbit){.valid = false, .ke = {0}};
+        return (TransferOrbit){.valid = false, .ke = {0}, .t1 = 0, .t2 = 0, .body1 = body1, .body2 = body2};
     }
 
     Body parent = kerbol_system_bodies[body1.parent_id];
@@ -38,7 +38,7 @@ TransferOrbit planetary_transfer_orbit(Body body1, Body body2, double t1, double
 
     if (!sol.valid)
     {
-        return (TransferOrbit){.valid = false, .ke = {0}};
+        return (TransferOrbit){.valid = false, .ke = {0}, .t1 = 0, .t2 = 0, .body1 = body1, .body2 = body2};
     }
 
     // Get velocity at time t1 and construct state vector of transfer orbit at t1
@@ -49,18 +49,37 @@ TransferOrbit planetary_transfer_orbit(Body body1, Body body2, double t1, double
 
     // Generate the transfer orbit
     KeplerianElements ke = ke_from_state_vector(b1t1_transfer, parent.mu);
-    return (TransferOrbit){.valid = true, .ke = ke};
+    return (TransferOrbit){.valid = true, .ke = ke, .t1 = t1, .t2 = t2, .body1 = body1, .body2 = body2};
 }
 
-Vector3 excess_velocity_at_body(Body body, KeplerianElements transfer_orbit, double ut)
+Vector3 excess_velocity_at_body(TransferOrbit transfer_orbit,
+                                enum ArrivalDepartureEnum arrival_or_departure)
 {
+    Body parent = kerbol_system_bodies[transfer_orbit.body1.parent_id];
+
+    double ut;
+
+    StateVector body_state;
+    if (arrival_or_departure == DEPARTURE)
+    {
+        ut = transfer_orbit.t1;
+        body_state = get_rel_state_at_time(ut,
+                                           transfer_orbit.body1.parent_id,
+                                           transfer_orbit.body1.body_id);
+    }
+    else
+    {
+        ut = transfer_orbit.t2;
+        body_state = get_rel_state_at_time(ut,
+                                           transfer_orbit.body2.parent_id,
+                                           transfer_orbit.body2.body_id);
+    }
+
     // Calculate the excess velocity at a body given a transfer orbit
     // Excess velocity is the velocity of the transfer orbit relative to the body
-    StateVector body_state = get_rel_state_at_time(ut, body.parent_id, body.body_id);
-    Body parent = kerbol_system_bodies[body.parent_id];
 
     // Ensure that we are evaluating state at time ut
-    KeplerianElements orbit_ke = ke_orbit_prop(ut, transfer_orbit, parent.mu);
+    KeplerianElements orbit_ke = ke_orbit_prop(ut, transfer_orbit.ke, parent.mu);
     StateVector transfer_state = state_vector_from_ke(orbit_ke, parent.mu);
 
     Vector3 excess_velocity = vec_sub(transfer_state.velocity, body_state.velocity);

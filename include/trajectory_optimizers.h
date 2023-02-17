@@ -10,8 +10,8 @@ planning trajectories.
 #ifndef TRAJECTORY_OPTIMIZERS_H
 #define TRAJECTORY_OPTIMIZERS_H
 
+#include <stdbool.h>
 #include "kerbol_system_types.h"
-
 typedef struct GridSearchResult
 {
     int n_grid_t1;
@@ -25,7 +25,9 @@ typedef struct GridSearchProblem
 {
     Body body1;
     Body body2;
-    double r_pe_1;
+    bool include_capture; // whether or not to include capture burn dv
+    double r_pe_1;        // body 1 periapsis RADIUS (m)
+    double r_pe_2;        // body 2 periapsis RADIUS (m)
     double t1_min;
     double t1_max;
     double tof_min;
@@ -35,6 +37,6 @@ typedef struct GridSearchProblem
 } GridSearchProblem;
 
 void free_GridSearchResult(GridSearchResult result);
-GridSearchResult ejection_dv(GridSearchProblem problem);
+GridSearchResult transfer_dv(GridSearchProblem problem);
 
 #endif // TRAJECTORY_OPTIMIZERS_H

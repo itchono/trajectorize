@@ -12,12 +12,23 @@ def _process_chunked_dv(t1_min: float, t1_max: float,
                         tof_lim: "tuple(float, float)",
                         body1: Body, body2: Body,
                         parking_orbit_alt: float,
+                        capture_orbit_alt: float,
+                        include_capture: bool,
                         n_grid_t1: int = 100,
                         n_grid_tof: int = 100) -> np.ndarray:
+
+    r_pe_1 = parking_orbit_alt + body1.radius
+    if include_capture:
+        r_pe_2 = capture_orbit_alt + body2.radius
+    else:
+        r_pe_2 = 0
+
     gs_prob = ffi.new("struct GridSearchProblem *",
                       {"body1": body1.c_data,
                        "body2": body2.c_data,
-                       "r_pe_1": parking_orbit_alt,
+                       "include_capture": include_capture,
+                       "r_pe_1": r_pe_1,
+                       "r_pe_2": r_pe_2,
                        "t1_min": t1_min,
                        "t1_max": t1_max,
                        "tof_min": tof_lim[0],
@@ -25,7 +36,7 @@ def _process_chunked_dv(t1_min: float, t1_max: float,
                        "n_grid_t1": n_grid_t1,
                        "n_grid_tof": n_grid_tof})[0]
 
-    gs_sol = lib.ejection_dv(gs_prob)
+    gs_sol = lib.transfer_dv(gs_prob)
 
     # parse arrays
     arr_shape = (gs_prob.n_grid_t1, gs_prob.n_grid_tof)
@@ -43,14 +54,17 @@ def interplanetary_transfer_dv(body1: Body, body2: Body,
                                t1_lim: "tuple(float, float)",
                                tof_lim: "tuple(float, float)",
                                parking_orbit_alt: float,
+                               capture_orbit_alt: float,
+                               include_capture: bool,
                                n_grid: int = 200,
                                process_count: int = cpu_count()) \
         -> "tuple(np.ndarray, np.ndarray, np.ndarray)":
+
     if process_count > n_grid:
         raise ValueError(f"process_count of {process_count} is greater"
                          f" than grid size of {n_grid}, cannot slice"
                          " problem so finely. Use fewer processes.")
-        
+
     if body1.parent != body2.parent:
         raise ValueError("body1 and body2 must have the same parent.")
 
@@ -65,6 +79,8 @@ def interplanetary_transfer_dv(body1: Body, body2: Body,
                                        body1=body1, body2=body2,
                                        tof_lim=tof_lim,
                                        parking_orbit_alt=parking_orbit_alt,
+                                       capture_orbit_alt=capture_orbit_alt,
+                                       include_capture=include_capture,
                                        n_grid_t1=n_grid_t1, n_grid_tof=n_grid),
                                t1_limit_zip)
 

@@ -15,12 +15,21 @@ Header file for functions to calculate transfer orbits between two bodies in the
 
 #include <stdbool.h>
 
-
 typedef struct TransferOrbit
 {
     KeplerianElements ke;
     bool valid;
+    double t1; // ut (s) at departure
+    double t2; // ut (s) at arrival
+    Body body1;
+    Body body2;
 } TransferOrbit;
+
+enum ArrivalDepartureEnum
+{
+    DEPARTURE,
+    ARRIVAL
+};
 
 /**
  * @brief Computes a planetary transfer orbit between two bodies orbiting a common parent.
@@ -35,13 +44,14 @@ typedef struct TransferOrbit
 TransferOrbit planetary_transfer_orbit(Body body1, Body body2, double t1, double t2);
 
 /**
- * @brief Computes excess hyperbolic velocity (v_infinity) at SOI interface
- * @param body body to compare with
- * @param transfer_orbit transfer orbit to compare with
- * @param ut universal timestamp - should be either the t1 or t2 value used to generate the transfer orbit
- * @return excess velocity vector (m/s)
+ * @brief Computes excess velocity at a body at either end of a transfer orbit.
+ * (i.e. velocity at infinity relative to the body)
+ *
+ * @param transfer_orbit
+ * @param arrival_or_departure
+ * @return Vector3 - velocity vector relative to the body at arrival or departure
  */
-Vector3 excess_velocity_at_body(Body body, KeplerianElements transfer_orbit, double ut);
+Vector3 excess_velocity_at_body(TransferOrbit transfer_orbit, enum ArrivalDepartureEnum arrival_or_departure);
 
 /**
  * @brief Gets heurisitic time of flight from body1 to body2 using an ideal Hohmann transfer.
@@ -49,7 +59,7 @@ Vector3 excess_velocity_at_body(Body body, KeplerianElements transfer_orbit, dou
  * @param body1 first body
  * @param body2 second body
  * @return time of flight in seconds
- * 
+ *
  * @note formula used: half-period of Hohmann transfer orbit
  */
 double approximate_time_of_flight(Body body1, Body body2);

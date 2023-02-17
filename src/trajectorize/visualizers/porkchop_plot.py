@@ -13,6 +13,8 @@ def porkchop_plot_ejection(ax: Axes,
                            t1_lim: "tuple(float, float)",
                            tof_lim: "tuple(float, float)",
                            parking_orbit_alt: float,
+                           capture_orbit_alt: float,
+                           include_capture: bool,
                            n_grid: int = 200) \
         -> "tuple(np.ndarray, np.ndarray, np.ndarray)":
     '''
@@ -22,7 +24,10 @@ def porkchop_plot_ejection(ax: Axes,
     '''
     dv, t1, tof = interplanetary_transfer_dv(body1, body2,
                                              t1_lim, tof_lim,
-                                             parking_orbit_alt, n_grid)
+                                             parking_orbit_alt,
+                                             capture_orbit_alt,
+                                             include_capture,
+                                             n_grid)
 
     dvs = dv.ravel()
 
@@ -46,7 +51,10 @@ def porkchop_plot_ejection(ax: Axes,
     colorbar.set_ticks(tick_marks)
 
     # set the labels
-    ax.set_title(f'Ejection Burn $\Delta v$ from {body1.name} to {body2.name} (m/s)')
+    dv_title = "Ejection + Capture" if include_capture else "Ejection"
+
+    ax.set_title(
+        f'{dv_title} $\Delta v$ from {body1.name} to {body2.name} (m/s)')
     ax.set_xlabel('Departure Time')
     ax.set_ylabel('Time of Flight')
 

@@ -11,7 +11,7 @@ void free_GridSearchResult(GridSearchResult result)
     free(result.tof);
 }
 
-GridSearchResult ejection_dv(GridSearchProblem problem)
+GridSearchResult transfer_dv(GridSearchProblem problem)
 {
 
     double d_t1 = (problem.t1_max - problem.t1_min) / problem.n_grid_t1;
@@ -39,12 +39,17 @@ GridSearchResult ejection_dv(GridSearchProblem problem)
             double t2 = t1 + tof;
 
             TransferOrbit to = planetary_transfer_orbit(problem.body1,
-                                                        problem.body2, t1, t2);
-            Vector3 xs_vel = excess_velocity_at_body(problem.body1, to.ke, t1);
-            double xs_spd = vec_norm(xs_vel);
+                                                        problem.body2,
+                                                        t1, t2);
+            Vector3 dep_xs_vel = excess_velocity_at_body(to, DEPARTURE);
+            dv_arr[idx] = ejection_capture_dv(problem.body1, dep_xs_vel, problem.r_pe_1);
 
-            double eff_pe = problem.r_pe_1 + problem.body1.radius;
-            dv_arr[idx] = delta_v_req(problem.body1, xs_spd, eff_pe);
+            // Calculate arrival dv if needed
+            if (problem.include_capture)
+            {
+                Vector3 arr_xs_vel = excess_velocity_at_body(to, ARRIVAL);
+                dv_arr[idx] += ejection_capture_dv(problem.body2, arr_xs_vel, problem.r_pe_2);
+            }
         }
     }
 

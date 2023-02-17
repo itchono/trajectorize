@@ -110,7 +110,7 @@ class Body:
         name_dict = {k.casefold(): v for k, v in BodyEnum.__members__.items()}
 
         if name.casefold() not in name_dict:
-            raise ValueError("Invalid planet")
+            raise ValueError(f"Invalid celestial body: {name}")
 
         return cls.from_identifier(name_dict[name.casefold()])
 

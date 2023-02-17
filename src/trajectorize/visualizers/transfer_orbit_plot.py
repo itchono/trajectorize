@@ -5,12 +5,13 @@ from matplotlib.lines import Line2D
 
 from trajectorize.ephemeris.kerbol_system import Body
 from trajectorize.trajectory.transfer_orbit import planetary_transfer_orbit
-from trajectorize.visualizers.celestial_body_plot import plot_body_rel_parent
+from trajectorize.visualizers.celestial_system_plot import plot_body_rel_parent
+from trajectorize.orbit.conic_kepler import KeplerianOrbit
 
 
 def plot_transfer_orbit_path(body1: Body, body2: Body, t1: float, t2: float,
-                        ax: Axes,
-                        plot_full_orbit: bool = False) -> "tuple(Artist)":
+                             ax: Axes,
+                             plot_full_orbit: bool = False) -> "tuple(Artist)":
     '''
     Plots a transfer orbit between two bodies on a matplotlib axes object.
 
@@ -31,7 +32,9 @@ def plot_transfer_orbit_path(body1: Body, body2: Body, t1: float, t2: float,
         the portion of the orbit between t1 and t2 if False.
     '''
     # Get transfer orbit
-    transfer_orbit = planetary_transfer_orbit(body1, body2, t1, t2)
+    transfer_orbit_struct = planetary_transfer_orbit(body1, body2, t1, t2)
+    transfer_orbit = KeplerianOrbit(transfer_orbit_struct.ke,
+                                    transfer_orbit_struct.body1.parent)
 
     if plot_full_orbit:
         transfer_locus = transfer_orbit.get_locus(500)
@@ -45,7 +48,7 @@ def plot_transfer_orbit_path(body1: Body, body2: Body, t1: float, t2: float,
 
 
 def plot_transfer(body1: Body, body2: Body, t1: float,
-                                 t2: float, ax: Axes) -> None:
+                  t2: float, ax: Axes) -> None:
 
     # Get transfer orbit
     plot_transfer_orbit_path(body1, body2, t1, t2, ax)
@@ -59,10 +62,10 @@ def plot_transfer(body1: Body, body2: Body, t1: float,
                          marker_str="o", markersize=10)
     plot_body_rel_parent(body2, t2, ax, plot_orbit=False,
                          marker_str="D", markersize=10)
-    
+
     # Plot central body
     ax.plot(0, 0, 'o', markersize=10, color=body1.parent.colour_hex)
-    
+
     # Plot custom legend; label circle marker = t1, label diamond marker = t2
     legend_elements = [Line2D([0], [0], marker='o', markerfacecolor='w', lw=0,
                               label=f'Positions at {body1.name} Departure'),

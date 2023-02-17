@@ -50,14 +50,17 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum Traje
     double r1 = vec_norm(R1);
     double r2 = vec_norm(R2);
 
-    // Check for nearly colinear vectors
-    if (fabs(fabs(vec_dot(vec_mul_scalar(1.0/r1, R1), vec_mul_scalar(1.0/r2, R2))) - 1) < 1e-4) {
-        LambertSolution solution = {0, 0, dt, false};
-    return solution;
+    double norm_vec_dot = vec_dot(vec_normalized(R1), vec_normalized(R2));
+
+    // Check for nearly colinear vectors (dot product of unit vectors is +/- 1)
+    if (fabs(fabs(norm_vec_dot) - 1) < 1e-4)
+    {
+        LambertSolution solution = {.v1 = {{0}}, .v2 = {{0}}, .dt = dt, .valid = false};
+        return solution;
     }
 
     Vector3 c12 = vec_cross(R1, R2);
-    double theta = acos(vec_dot(R1, R2) / (r1 * r2));
+    double theta = acos(norm_vec_dot);
 
     // Invert direction of transfer if:
     // 1. direction is prograde but c12.z <= 0
@@ -126,6 +129,5 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum Traje
 
     bool converged = fabs(dz) < ATOL;
 
-    LambertSolution solution = {V1, V2, dt, converged};
-    return solution;
+    return (LambertSolution){V1, V2, dt, converged};
 }

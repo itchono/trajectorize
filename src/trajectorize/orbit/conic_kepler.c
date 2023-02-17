@@ -135,7 +135,26 @@ StateVectorArray ke_state_locus(KeplerianElements orbit, double mu, int n)
     // Format: x, y, z, vx, vy, vz, t; t is set to the epoch of the orbit (invariant)
     // we're doing some crazy struct-packing hackery here
 
-    double d_theta = 2 * M_PI / (n - 1); // guarantees full cover
+    /*
+    Sample true anomaly at different points in the orbit,
+    depending on whether it's elliptical or hyperbolic
+    */
+    double initial_theta;
+    double d_theta;
+
+    if (orbit.eccentricity < 0.999)
+    {
+        initial_theta = -M_PI;
+        d_theta = 2 * M_PI / (n - 1); // guarantees full cover
+    }
+    else
+    {
+        // check for theta_infinity point
+        double effective_theta_infinity = acos(-1 / (orbit.eccentricity * 1.1));
+        initial_theta = -effective_theta_infinity;
+        d_theta = 2 * effective_theta_infinity / (n - 1);
+    }
+
     for (int i = 0; i < n; i++)
     {
         double theta = i * d_theta;
@@ -230,6 +249,72 @@ KeplerianElements ke_from_state_vector(StateVector state_vector, double mu)
         omega,
         nu,
         state_vector.time};
+
+    return orbit;
+}
+
+KeplerianElements fit_hyperbolic_trajectory(Vector3 v_inf,
+                                            double r_pe, double mu)
+{
+    /*
+    Basic idea of algorithm:
+    - Find a hyperbolic trajectory whose asymptote lines up with the velocity vector
+    - Get angles of velocity vector wrt Kerbin at SOI exit
+    - Get energy parameters of orbit to determine hyperbolic asymptote angle
+    - Find RAAN, inclination, AOP needed to eject at proper angle, given
+      the hyperbolic asymptote angle
+    */
+
+    // TODO: Make sure this actually works
+
+    // Compute angles of velocity vector wrt Kerbin
+    double v_inf_theta = atan2(v_inf.y, v_inf.x);                                   // in-plane angle
+    double v_inf_phi = atan2(v_inf.z, sqrt(v_inf.x * v_inf.x + v_inf.y * v_inf.y)); // out-of-plane angle
+
+    // Get angular momentum of orbit
+    double v_inf_mag = vec_norm(v_inf);
+    double h = r_pe * sqrt(v_inf_mag * v_inf_mag + 2 * mu / r_pe);
+
+    // Get eccentricity of orbit
+    double e = 1 + r_pe * v_inf_mag * v_inf_mag / mu;
+
+    // Get true anomaly of asymptote
+    double theta_infinity = acos(-1 / e);
+
+    /*
+    Rotation math
+    - the 2D plane of the hyperbolic trajectory is determined by the velocity vector
+      given above (determines RAAN and inclination)
+    - argument of periapsis is determined by factoring in the hyperbolic asymptote angle
+
+    The ascending node of the orbit is located 90 degrees in front or behind
+    the SOI exit point (denoted by angle v_inf_theta).
+
+    Rotations are 3-1-3 (RAAN-inc-AOP), so determine in that order.
+    */
+
+    double raan;
+    if (v_inf_phi > 0)
+    {
+        raan = v_inf_theta - M_PI / 2;
+    }
+    else
+    {
+        raan = v_inf_theta + M_PI / 2;
+    }
+    double inc = v_inf_phi;
+
+    // i.e. we reach the asymptote at the same time as the ascending node
+    double aop = -theta_infinity;
+
+    KeplerianElements orbit = {
+        .semi_major_axis = h * h / mu,
+        .eccentricity = e,
+        .inclination = inc,
+        .longitude_of_ascending_node = raan,
+        .argument_of_periapsis = aop,
+        .true_anomaly = 0,
+        .epoch = 0};
 
     return orbit;
 }

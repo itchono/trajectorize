@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 
 from trajectorize.ephemeris.kerbol_system import Body
 from trajectorize.visualizers.display_utils import display_or_save_plot
-from trajectorize.visualizers.planetary_transfer_plot import plot_transfer
+from trajectorize.visualizers.transfer_orbit_plot import plot_transfer
 
 if __name__ == "__main__":
     kerbin = Body.from_name("Kerbin")
