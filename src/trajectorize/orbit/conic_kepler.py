@@ -74,7 +74,7 @@ class KeplerianOrbit:
         arr = process_sva_buffer(state_vec_arr, n)
 
         return arr[:, 0:3]
-    
+
     @classmethod
     def from_celestial_body(cls, body: Body, ut: float):
         '''

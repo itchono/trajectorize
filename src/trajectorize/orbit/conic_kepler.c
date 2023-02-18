@@ -157,7 +157,7 @@ StateVectorArray ke_state_locus(KeplerianElements orbit, double mu, int n)
 
     for (int i = 0; i < n; i++)
     {
-        double theta = i * d_theta;
+        double theta = i * d_theta + initial_theta;
         KeplerianElements orbit_i = {
             .semi_major_axis = orbit.semi_major_axis,
             .eccentricity = orbit.eccentricity,

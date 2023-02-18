@@ -41,7 +41,7 @@ enum ArrivalDepartureEnum
  * @param t2 time of arrival, ut (s)
  * @return TransferOrbit struct, containing KeplerianElements if the solution obtained is valid.
  */
-TransferOrbit planetary_transfer_orbit(Body body1, Body body2, double t1, double t2);
+TransferOrbit get_transfer_orbit(Body body1, Body body2, double t1, double t2);
 
 /**
  * @brief Computes excess velocity at a body at either end of a transfer orbit.

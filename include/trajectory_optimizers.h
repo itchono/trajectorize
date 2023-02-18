@@ -18,7 +18,8 @@ typedef struct GridSearchResult
     int n_grid_tof;
     double *t1;
     double *tof;
-    double *dv;
+    double *dv_ejection;
+    double *dv_capture;
 } GridSearchResult;
 
 typedef struct GridSearchProblem

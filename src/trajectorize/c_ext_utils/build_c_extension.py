@@ -66,7 +66,8 @@ ffi = FFI()
 # it helps facilitate testing, but may be overwhelming for production
 # (may want to change this in the future)
 
-# remove anything in front of a slash, e.g. "include/vec_math.h" -> "vec_math.h"
+# remove anything in front of a slash, e.g. "include/vec_math.h" ->
+# "vec_math.h"
 
 # delimiter for windows vs unix
 delimiter = "\\" if sys.platform.startswith("win") else "/"

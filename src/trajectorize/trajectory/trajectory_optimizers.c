@@ -6,7 +6,8 @@
 
 void free_GridSearchResult(GridSearchResult result)
 {
-    free(result.dv);
+    free(result.dv_ejection);
+    free(result.dv_capture);
     free(result.t1);
     free(result.tof);
 }
@@ -21,7 +22,8 @@ GridSearchResult transfer_dv(GridSearchProblem problem)
 
     double *t1_arr = malloc(sizeof(double) * n2_grid);
     double *tof_arr = malloc(sizeof(double) * n2_grid);
-    double *dv_arr = malloc(sizeof(double) * n2_grid);
+    double *dv_ejection_arr = malloc(sizeof(double) * n2_grid);
+    double *dv_capture_arr = malloc(sizeof(double) * n2_grid);
 
     // Init arrays
     for (int i = 0; i < problem.n_grid_t1; i++)
@@ -38,22 +40,23 @@ GridSearchResult transfer_dv(GridSearchProblem problem)
 
             double t2 = t1 + tof;
 
-            TransferOrbit to = planetary_transfer_orbit(problem.body1,
-                                                        problem.body2,
-                                                        t1, t2);
+            TransferOrbit to = get_transfer_orbit(problem.body1,
+                                                  problem.body2,
+                                                  t1, t2);
             Vector3 dep_xs_vel = excess_velocity_at_body(to, DEPARTURE);
-            dv_arr[idx] = ejection_capture_dv(problem.body1, dep_xs_vel, problem.r_pe_1);
+            dv_ejection_arr[idx] = ejection_capture_dv(problem.body1, dep_xs_vel, problem.r_pe_1);
 
             // Calculate arrival dv if needed
             if (problem.include_capture)
             {
                 Vector3 arr_xs_vel = excess_velocity_at_body(to, ARRIVAL);
-                dv_arr[idx] += ejection_capture_dv(problem.body2, arr_xs_vel, problem.r_pe_2);
+                dv_capture_arr[idx] = ejection_capture_dv(problem.body2, arr_xs_vel, problem.r_pe_2);
             }
         }
     }
 
-    GridSearchResult sol = {.dv = dv_arr,
+    GridSearchResult sol = {.dv_ejection = dv_ejection_arr,
+                            .dv_capture = dv_capture_arr,
                             .t1 = t1_arr,
                             .tof = tof_arr,
                             .n_grid_t1 = problem.n_grid_t1,

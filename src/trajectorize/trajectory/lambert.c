@@ -5,12 +5,12 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #ifndef M_PI
-#define M_PI 3.14159265358979323846
+#define M_PI (3.14159265358979323846)
 #endif // M_PI
 
 #define ATOL (1e-6)
-#define MAX_ITER (500)
-#define NEWTON_SWITCHOVER_POINT (1e-2)
+#define MAX_ITER (200)
+#define NEWTON_SWITCHOVER_POINT (1e-6) // Newton has been disabled for now
 
 double func_y(double z, double r1, double r2, double A)
 {
@@ -36,7 +36,7 @@ double deriv_F_z(double z, double r1, double r2, double A, double mu)
 {
     double y0 = func_y(0, r1, r2, A);
     // Equation 5.43 from Curtis
-    if (z == 0)
+    if (fabs(z) < ATOL) // close to zero
     {
         return sqrt(2) / 40 * pow(y0, 1.5) + A / 8 * (sqrt(y0)) + A * sqrt(1 / 2 / y0);
     }
@@ -79,8 +79,8 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum Traje
     // Strategy
     // 1. Find a bracket for the sign change point
     // 2. Switch over to Newton's method when the bracket is sufficiently small
-    double a = -100;
-    double b = 100;
+    double a = -20;
+    double b = 20;
     double z = (a + b) / 2;
 
     double dz = 2 * ATOL;
@@ -89,16 +89,15 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum Traje
     {
         double F = func_F(z, dt, r1, r2, A, mu);
 
-        // collect information for bisection
-        if (F > 0)
-            b = z;
-        else
-            a = z;
-
         // decide if we want to use bisection or newton for next iteration
-        if ((b - a) > NEWTON_SWITCHOVER_POINT)
+        if (((b - a) > NEWTON_SWITCHOVER_POINT))
         {
             // Bisection iteration
+            if (F > 0)
+                b = z;
+            else
+                a = z;
+
             z = (a + b) / 2;
         }
         else

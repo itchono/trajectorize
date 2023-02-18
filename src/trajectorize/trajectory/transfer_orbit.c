@@ -14,7 +14,7 @@
 #define M_PI (3.14159265358979323846)
 #endif // M_PI
 
-TransferOrbit planetary_transfer_orbit(Body body1, Body body2, double t1, double t2)
+TransferOrbit get_transfer_orbit(Body body1, Body body2, double t1, double t2)
 {
     // Calculates a transfer orbit from body1 to body2 at time t1 to arrive at body2 at time t2
     // Keplerian elements are given in terms of the common parent body at time t1

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import IntEnum
 
 import numpy as np
@@ -7,8 +8,6 @@ from trajectorize.ephemeris.kerbol_system import Body, BodyEnum
 from trajectorize.math_lib.math_interfaces import (np_array_from_vec3,
                                                    vec3_from_np_array)
 from trajectorize.orbit.conic_kepler import KeplerianElements, KeplerianOrbit
-
-from dataclasses import dataclass
 
 
 class TrajectoryDirection(IntEnum):
@@ -52,9 +51,9 @@ class TransferOrbit:
         })[0]
 
 
-def planetary_transfer_orbit(body1: Body, body2: Body, t1: float, t2: float) \
+def get_transfer_orbit(body1: Body, body2: Body, t1: float, t2: float) \
         -> TransferOrbit:
-    sol = lib.planetary_transfer_orbit(body1.c_data, body2.c_data, t1, t2)
+    sol = lib.get_transfer_orbit(body1.c_data, body2.c_data, t1, t2)
 
     if not sol.valid:
         return None
@@ -125,7 +124,7 @@ def trajectory_ejection_dv(t1: float, t2: float,
     '''
     if body1.parent != body2.parent:
         raise ValueError("body1 and body2 must have the same parent.")
-    transfer_orbit = planetary_transfer_orbit(
+    transfer_orbit = get_transfer_orbit(
         body1, body2, t1, t2)
 
     if transfer_orbit is None:
@@ -147,7 +146,7 @@ if __name__ == "__main__":
     t1 = 5091552
     t2 = 10679760
 
-    transfer_orbit = planetary_transfer_orbit(kerbin, duna, t1, t2)
+    transfer_orbit = get_transfer_orbit(kerbin, duna, t1, t2)
     kerbin_excess_velocity = get_excess_velocity(
         transfer_orbit, ArrivalDeparture.DEPARTURE)
 

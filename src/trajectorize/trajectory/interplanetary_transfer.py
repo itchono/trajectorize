@@ -1,11 +1,27 @@
 from functools import partial
 from multiprocessing import Pool, cpu_count
+from typing import NamedTuple
 
 import numpy as np
 
 from trajectorize._c_extension import ffi, lib
 from trajectorize.c_ext_utils.extract_arrays import extract_double_array
 from trajectorize.ephemeris.kerbol_system import Body
+
+
+class InterplanetaryTransferResult(NamedTuple):
+    body1: Body
+    body2: Body
+    dv_ejection: np.ndarray
+    dv_capture: np.ndarray
+    t1: np.ndarray
+    tof: np.ndarray
+    include_capture: bool
+
+    @property
+    def dv(self):
+        return self.dv_ejection + self.dv_capture \
+            if self.include_capture else self.dv_ejection
 
 
 def _process_chunked_dv(t1_min: float, t1_max: float,
@@ -41,13 +57,14 @@ def _process_chunked_dv(t1_min: float, t1_max: float,
     # parse arrays
     arr_shape = (gs_prob.n_grid_t1, gs_prob.n_grid_tof)
 
-    dv = extract_double_array(gs_sol.dv, arr_shape)
+    dv_ejection = extract_double_array(gs_sol.dv_ejection, arr_shape)
+    dv_capture = extract_double_array(gs_sol.dv_capture, arr_shape)
     t1 = extract_double_array(gs_sol.t1, arr_shape)
     tof = extract_double_array(gs_sol.tof, arr_shape)
 
     lib.free_GridSearchResult(gs_sol)
 
-    return np.stack((dv, t1, tof), -1)
+    return np.stack((dv_ejection, dv_capture, t1, tof), -1)
 
 
 def interplanetary_transfer_dv(body1: Body, body2: Body,
@@ -58,7 +75,7 @@ def interplanetary_transfer_dv(body1: Body, body2: Body,
                                include_capture: bool,
                                n_grid: int = 200,
                                process_count: int = cpu_count()) \
-        -> "tuple(np.ndarray, np.ndarray, np.ndarray)":
+        -> InterplanetaryTransferResult:
 
     if process_count > n_grid:
         raise ValueError(f"process_count of {process_count} is greater"
@@ -86,8 +103,12 @@ def interplanetary_transfer_dv(body1: Body, body2: Body,
 
     big_arr = np.concatenate(arr_seq, 0)
 
-    dv = big_arr[:, :, 0]
-    t1 = big_arr[:, :, 1]
-    tof = big_arr[:, :, 2]
+    dv_ejection = big_arr[:, :, 0]
+    dv_capture = big_arr[:, :, 1]
+    t1 = big_arr[:, :, 2]
+    tof = big_arr[:, :, 3]
 
-    return (dv, t1, tof)
+    return InterplanetaryTransferResult(body1, body2,
+                                        dv_ejection, dv_capture,
+                                        t1, tof,
+                                        include_capture)

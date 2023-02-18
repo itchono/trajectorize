@@ -4,9 +4,9 @@ from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 
 from trajectorize.ephemeris.kerbol_system import Body
-from trajectorize.trajectory.transfer_orbit import planetary_transfer_orbit
-from trajectorize.visualizers.celestial_system_plot import plot_body_rel_parent
 from trajectorize.orbit.conic_kepler import KeplerianOrbit
+from trajectorize.trajectory.transfer_orbit import get_transfer_orbit
+from trajectorize.visualizers.celestial_system_plot import plot_body_rel_parent
 
 
 def plot_transfer_orbit_path(body1: Body, body2: Body, t1: float, t2: float,
@@ -32,7 +32,7 @@ def plot_transfer_orbit_path(body1: Body, body2: Body, t1: float, t2: float,
         the portion of the orbit between t1 and t2 if False.
     '''
     # Get transfer orbit
-    transfer_orbit_struct = planetary_transfer_orbit(body1, body2, t1, t2)
+    transfer_orbit_struct = get_transfer_orbit(body1, body2, t1, t2)
     transfer_orbit = KeplerianOrbit(transfer_orbit_struct.ke,
                                     transfer_orbit_struct.body1.parent)
 

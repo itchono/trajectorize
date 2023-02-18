@@ -1,9 +1,7 @@
 from matplotlib.artist import Artist
 from matplotlib.axes import Axes
 
-from trajectorize.ephemeris.kerbol_system import (Body, BodyEnum,
-                                                  state_vector_at_time)
-from trajectorize.orbit.conic_kepler import KeplerianElements, KeplerianOrbit
+from trajectorize.ephemeris.kerbol_system import Body, state_vector_at_time
 
 
 def plot_body_rel_parent(body: Body, ut: float, ax: Axes,
@@ -54,7 +52,7 @@ def plot_body_rel_parent(body: Body, ut: float, ax: Axes,
 def kerbol_system_plot(ut: float, ax: Axes,
                        num_ellipse_samples: int = 1000,
                        show_legend: bool = True,
-                       markersize: int = True) -> "tuple(Artist)":
+                       markersize: int = 5) -> "tuple(Artist)":
     '''
     Higher level "prefab" function to generate a pretty looking plot
     of the Kerbol system.
