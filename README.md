@@ -60,9 +60,9 @@ Right now, full functionality is incomplete. There are, however, some cool demos
 
 ## Calculations of Optimal Transfers, Porkchop Plots
 
-`python -m trajectorize.demos.kerbin_duna_porkchop`
+`python -m trajectorize.demos.single_transfer Kerbin Duna --capture_alt 60000`
 
-![Porkchop](https://raw.githubusercontent.com/itchono/trajectorize/assets/kerbin_duna_porkchop.png)
+![Porkchop](https://raw.githubusercontent.com/itchono/trajectorize/assets/single_transfer.png)
 
 # Inspirations
 

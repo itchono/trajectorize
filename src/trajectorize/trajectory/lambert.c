@@ -9,7 +9,7 @@
 #endif // M_PI
 
 #define ATOL (1e-6)
-#define MAX_ITER (200)
+#define MAX_ITER (500)
 #define NEWTON_SWITCHOVER_POINT (1e-6) // Newton has been disabled for now
 
 double func_y(double z, double r1, double r2, double A)

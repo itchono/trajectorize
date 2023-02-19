@@ -142,15 +142,22 @@ StateVectorArray ke_state_locus(KeplerianElements orbit, double mu, int n)
     double initial_theta;
     double d_theta;
 
+    // elliptical
     if (orbit.eccentricity < 0.999)
     {
         initial_theta = -M_PI;
         d_theta = 2 * M_PI / (n - 1); // guarantees full cover
     }
+    // near-hyperbolic
     else
     {
+        /*
+        Cut off locus at theta_infinity, which is the value of true anomaly
+        where the orbit's radius is infinite. We choose a slightly smaller
+        smaller value to avoid numerical issues.
+        */
         // check for theta_infinity point
-        double effective_theta_infinity = acos(-1 / (orbit.eccentricity * 1.1));
+        double effective_theta_infinity = acos(-1 / (orbit.eccentricity)) * 0.9;
         initial_theta = -effective_theta_infinity;
         d_theta = 2 * effective_theta_infinity / (n - 1);
     }
@@ -287,28 +294,21 @@ KeplerianElements fit_hyperbolic_trajectory(Vector3 v_inf,
       given above (determines RAAN and inclination)
     - argument of periapsis is determined by factoring in the hyperbolic asymptote angle
 
-    The ascending node of the orbit is located 90 degrees in front or behind
-    the SOI exit point (denoted by angle v_inf_theta).
+    The ascending node of the orbit is located opposite the exit point.
 
     Rotations are 3-1-3 (RAAN-inc-AOP), so determine in that order.
     */
 
-    double raan;
-    if (v_inf_phi > 0)
-    {
-        raan = v_inf_theta - M_PI / 2;
-    }
-    else
-    {
-        raan = v_inf_theta + M_PI / 2;
-    }
+    double raan = v_inf_theta - M_PI;
     double inc = v_inf_phi;
 
     // i.e. we reach the asymptote at the same time as the ascending node
     double aop = -theta_infinity;
 
+    double sma = h * h / (mu * (e * e - 1));
+
     KeplerianElements orbit = {
-        .semi_major_axis = h * h / mu,
+        .semi_major_axis = sma,
         .eccentricity = e,
         .inclination = inc,
         .longitude_of_ascending_node = raan,
