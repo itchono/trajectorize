@@ -72,8 +72,21 @@ class KeplerianOrbit:
         state_vec_arr = lib.ke_state_locus(
             self.ke.c_data, self.parent_body.mu, n)
         arr = process_sva_buffer(state_vec_arr, n)
-
         return arr[:, 0:3]
+
+    @classmethod
+    def from_celestial_body(cls, body: Body, ut: float):
+        '''
+        Creates a KeplerianOrbit object from a celestial body
+        at some time.
+        '''
+
+        # Use library function: ke_from_pke
+        pke_c = body.orbit.c_data
+
+        ke_c = lib.ke_from_pke(pke_c, ut, body.mu)
+        ke = KeplerianElements.from_c_data(ke_c)
+        return cls(ke, body.parent)
 
     @ property
     def T(self) -> float:
@@ -119,3 +132,32 @@ class KeplerianOrbit:
 
         arr = process_sva_buffer(prop_orbit, len(times))
         return arr[:, 0:3]
+
+
+def fit_hyperbolic_trajectory(velocity_inf: np.ndarray,
+                              r_pe: float,
+                              body: Body) -> KeplerianOrbit:
+    '''
+    Fits a hyperbolic trajectory with given parameters.
+
+    Parameters
+    ----------
+    velocity_inf : np.ndarray
+        Velocity vector at infinity
+    r_pe : float
+        Periapsis radius
+    body : Body
+        Central body
+
+    Returns
+    -------
+    KeplerianOrbit
+        Orbit object
+    '''
+    c_vec = vec3_from_np_array(velocity_inf)
+
+    ke_c = lib.fit_hyperbolic_trajectory(c_vec, r_pe, body.mu)
+
+    ke = KeplerianElements.from_c_data(ke_c)
+
+    return KeplerianOrbit(ke, body)

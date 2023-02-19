@@ -1,5 +1,5 @@
-import pytest
 import numpy as np
+import pytest
 
 from trajectorize._c_extension import ffi, lib
 

@@ -6,6 +6,8 @@ KSP time conversions
 This file defines types and methods for representing time in KSP.
 */
 
+#include <stdbool.h>
+
 enum TimeType
 {
     EARTH_TIME, // 86400s days, 365d years
@@ -30,4 +32,4 @@ KSPTime ksp_time_from_ut(double ut, enum TimeType time_type);
 double ut_from_ksp_time(KSPTime ksp_time);
 
 void get_delta_time_string(KSPTime ksp_time, char *buffer, int buffer_size);
-void get_ut_time_string(KSPTime ksp_time, char *buffer, int buffer_size);
+void get_ut_time_string(KSPTime ksp_time, char *buffer, int buffer_size, bool day_only);

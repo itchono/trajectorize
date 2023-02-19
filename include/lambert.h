@@ -9,6 +9,8 @@ This header file contains definitions for Lambert's Problem
 #ifndef LAMBERT_H
 #define LAMBERT_H
 
+#include <stdbool.h>
+
 #include "vec_math_types.h"
 
 typedef struct LambertSolution
@@ -16,6 +18,7 @@ typedef struct LambertSolution
     Vector3 v1;
     Vector3 v2;
     double dt;
+    bool valid; // true if solution is valid
 } LambertSolution;
 
 // Lambert's Problem

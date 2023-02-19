@@ -5,12 +5,12 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #ifndef M_PI
-#define M_PI 3.14159265358979323846
+#define M_PI (3.14159265358979323846)
 #endif // M_PI
 
-#define ATOL (1e-12)
-#define MAX_ITER (150)
-#define NEWTON_SWITCHOVER_POINT (1e-4)
+#define ATOL (1e-6)
+#define MAX_ITER (500)
+#define NEWTON_SWITCHOVER_POINT (1e-6) // Newton has been disabled for now
 
 double func_y(double z, double r1, double r2, double A)
 {
@@ -36,7 +36,7 @@ double deriv_F_z(double z, double r1, double r2, double A, double mu)
 {
     double y0 = func_y(0, r1, r2, A);
     // Equation 5.43 from Curtis
-    if (z == 0)
+    if (fabs(z) < ATOL) // close to zero
     {
         return sqrt(2) / 40 * pow(y0, 1.5) + A / 8 * (sqrt(y0)) + A * sqrt(1 / 2 / y0);
     }
@@ -47,12 +47,20 @@ double deriv_F_z(double z, double r1, double r2, double A, double mu)
 LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum TrajectoryType type)
 {
     // Implementing algorithm D.25 from Curtis
-
     double r1 = vec_norm(R1);
     double r2 = vec_norm(R2);
 
+    double norm_vec_dot = vec_dot(vec_normalized(R1), vec_normalized(R2));
+
+    // Check for nearly colinear vectors (dot product of unit vectors is +/- 1)
+    if (fabs(fabs(norm_vec_dot) - 1) < 1e-4)
+    {
+        LambertSolution solution = {.v1 = {{0}}, .v2 = {{0}}, .dt = dt, .valid = false};
+        return solution;
+    }
+
     Vector3 c12 = vec_cross(R1, R2);
-    double theta = acos(vec_dot(R1, R2) / (r1 * r2));
+    double theta = acos(norm_vec_dot);
 
     // Invert direction of transfer if:
     // 1. direction is prograde but c12.z <= 0
@@ -71,34 +79,36 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum Traje
     // Strategy
     // 1. Find a bracket for the sign change point
     // 2. Switch over to Newton's method when the bracket is sufficiently small
-    double a = -100;
-    double b = 100;
+    double a = -20;
+    double b = 20;
     double z = (a + b) / 2;
+
+    double dz = 2 * ATOL;
 
     for (int i = 0; i < MAX_ITER; i++)
     {
         double F = func_F(z, dt, r1, r2, A, mu);
 
-        // collect information for bisection
-        if (F > 0)
-            b = z;
-        else
-            a = z;
-
         // decide if we want to use bisection or newton for next iteration
-        if ((b - a) > NEWTON_SWITCHOVER_POINT)
+        if (((b - a) > NEWTON_SWITCHOVER_POINT))
         {
             // Bisection iteration
+            if (F > 0)
+                b = z;
+            else
+                a = z;
+
             z = (a + b) / 2;
         }
         else
         {
             // Newton Iteration
             double F_z = deriv_F_z(z, r1, r2, A, mu);
-            z -= F / F_z;
+            dz = -F / F_z;
+            z += dz;
         }
 
-        if (fabs(F) < ATOL)
+        if (fabs(dz) < ATOL)
         {
             break;
         }
@@ -116,6 +126,7 @@ LambertSolution lambert(Vector3 R1, Vector3 R2, double dt, double mu, enum Traje
     // V2 = 1/g * (gdot*R2 - R1)
     Vector3 V2 = vec_mul_scalar(1 / g, vec_sub(vec_mul_scalar(gdot, R2), R1));
 
-    LambertSolution solution = {V1, V2, dt};
-    return solution;
+    bool converged = fabs(dz) < ATOL;
+
+    return (LambertSolution){V1, V2, dt, converged};
 }
