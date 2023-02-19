@@ -59,3 +59,14 @@ def test_state_vector_from_ke():
     sv = orbit.state_vector
     assert np.allclose(sv.position, position)
     assert np.allclose(sv.velocity, velocity)
+
+
+def test_hyperbolic_fitter():
+    # using Curtis example 2.10
+    v_inf = np.array([4.4e3, 0, 0])
+    r_pe = 6986e3
+
+    hyp_traj = conic_kepler.fit_hyperbolic_trajectory(v_inf, r_pe, EARTH_SI)
+
+    assert hyp_traj.ke.eccentricity == pytest.approx(1.3393, rel=1e-3)
+    assert hyp_traj.ke.semi_major_axis == pytest.approx(20590e3, rel=1e-3)

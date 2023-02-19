@@ -112,7 +112,7 @@ void get_delta_time_string(KSPTime ksp_time, char *buffer, int buffer_size)
     }
 }
 
-void get_ut_time_string(KSPTime ksp_time, char *buffer, int buffer_size)
+void get_ut_time_string(KSPTime ksp_time, char *buffer, int buffer_size, bool day_only)
 {
     // Return a formatted string similar to "Y1 D2 03:04:05"
     // Most useful for showing absolute time
@@ -123,7 +123,10 @@ void get_ut_time_string(KSPTime ksp_time, char *buffer, int buffer_size)
     int display_day = ksp_time.days + 1;   // KSP starts at day 1
 
     i += snprintf(buffer + i, buffer_size - i, "Y%d D%d ", display_year, display_day);
-    i += snprintf(buffer + i, buffer_size - i, "%02d:%02d:", ksp_time.hours, ksp_time.minutes);
-    int rounded_seconds = (int)(ksp_time.seconds + 0.5);
-    i += snprintf(buffer + i, buffer_size - i, "%02d", rounded_seconds);
+
+    if (!day_only) {
+        i += snprintf(buffer + i, buffer_size - i, "%02d:%02d:", ksp_time.hours, ksp_time.minutes);
+        int rounded_seconds = (int)(ksp_time.seconds + 0.5);
+        i += snprintf(buffer + i, buffer_size - i, "%02d", rounded_seconds);
+    }
 }

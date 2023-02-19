@@ -6,7 +6,7 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 
 from trajectorize.ephemeris.kerbol_system import (Body, BodyEnum,
                                                   state_vector_at_time)
-from trajectorize.ksp_time.time_conversion import TimeType, direct_ut_to_string
+from trajectorize.ksp_time.time_conversion import TimeType, ut_to_ut_string
 
 if __name__ == "__main__":
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     # place title inside the axes so it can blit
     title = ax.set_title(
-        f"Kerbol System, {direct_ut_to_string(t_ut[0], TimeType.KERBIN_TIME)}",
+        f"Kerbol System, {ut_to_ut_string(t_ut[0], TimeType.KERBIN_TIME)}",
         y=0.8, x=0.5, fontsize=12)
 
     ax.set_axis_off()
@@ -90,7 +90,7 @@ if __name__ == "__main__":
                                        planet_ephemerides[i][j].position[1])
 
         title.set_text(
-            f"Kerbol System, {direct_ut_to_string(t_ut[i], TimeType.KERBIN_TIME)}")
+            f"Kerbol System, {ut_to_ut_string(t_ut[i], TimeType.KERBIN_TIME)}")
 
         return planet_artists + [title]
 

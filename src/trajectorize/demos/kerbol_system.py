@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 
-from trajectorize.visualizers.celestial_body_plot import kerbol_system_plot
+from trajectorize.visualizers.celestial_system_plot import kerbol_system_plot
 from trajectorize.visualizers.display_utils import display_or_save_plot
 
 if __name__ == "__main__":

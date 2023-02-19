@@ -1,12 +1,10 @@
 from matplotlib.artist import Artist
 from matplotlib.axes import Axes
 
-from trajectorize.ephemeris.kerbol_system import (Body, BodyEnum,
-                                                  state_vector_at_time)
-from trajectorize.orbit.conic_kepler import KeplerianElements, KeplerianOrbit
+from trajectorize.ephemeris.kerbol_system import Body, state_vector_at_time
 
 
-def plot_body_rel_kerbol(body: Body, ut: float, ax: Axes,
+def plot_body_rel_parent(body: Body, ut: float, ax: Axes,
                          plot_orbit: bool = True,
                          num_ellipse_samples: int = 1000,
                          marker_str: str = "o",
@@ -14,7 +12,7 @@ def plot_body_rel_kerbol(body: Body, ut: float, ax: Axes,
     '''
     Plots a celestial body on a matplotlib axes object.
 
-    Plot centered around the Kerbol system origin.
+    Plot centered around the parent origin.
 
     Parameters
     ----------
@@ -35,7 +33,7 @@ def plot_body_rel_kerbol(body: Body, ut: float, ax: Axes,
     markersize: int
         The size of the marker to use when plotting the body.
     '''
-    obj_state_vec = state_vector_at_time(ut, BodyEnum.KERBOL,
+    obj_state_vec = state_vector_at_time(ut, body.parent_id,
                                          body.body_id)
     marker, = ax.plot(obj_state_vec.position[0], obj_state_vec.position[1],
                       marker=marker_str, markersize=markersize,
@@ -54,14 +52,14 @@ def plot_body_rel_kerbol(body: Body, ut: float, ax: Axes,
 def kerbol_system_plot(ut: float, ax: Axes,
                        num_ellipse_samples: int = 1000,
                        show_legend: bool = True,
-                       markersize: int = True) -> "tuple(Artist)":
+                       markersize: int = 5) -> "tuple(Artist)":
     '''
     Higher level "prefab" function to generate a pretty looking plot
     of the Kerbol system.
     '''
     planets = Body.planets()
     for body in planets:
-        plot_body_rel_kerbol(
+        plot_body_rel_parent(
             body, ut, ax, num_ellipse_samples=num_ellipse_samples,
             markersize=markersize)
 

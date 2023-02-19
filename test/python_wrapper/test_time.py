@@ -1,5 +1,5 @@
 from trajectorize.ksp_time.time_conversion import (KSPTime, TimeType,
-                                                   direct_ut_to_string)
+                                                   ut_to_ut_string)
 
 
 def test_ut_to_kerbin_time():
@@ -44,5 +44,5 @@ def test_earth_time_to_ut():
 def test_direct_ut_to_string():
     ut = 5091552
 
-    s = direct_ut_to_string(ut, TimeType.KERBIN_TIME)
+    s = ut_to_ut_string(ut, TimeType.KERBIN_TIME)
     assert s == "Y1 D236 04:19:12"

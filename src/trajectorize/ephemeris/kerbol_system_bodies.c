@@ -144,7 +144,7 @@ const Body kerbol_system_bodies[] =
          .mu = 1.8568369e10,
          .radius = 130000,
          .atmosphere_height = 0,
-         .orbit = {.semi_major_axis = 32000000,
+         .orbit = {.semi_major_axis = 3200000,
                    .eccentricity = 0.03,
                    .inclination = RADIANS(0.2),
                    .longitude_of_ascending_node = 0,
@@ -212,6 +212,7 @@ const Body kerbol_system_bodies[] =
                    .mean_anomaly_at_epoch = 0.9},
          .soi_radius = 2406401.4,
          .colour = 0x97c4e3},
+        // Tylo
         {.body_id = TYLO,
          .parent_id = JOOL,
          .mass = 4.2332127e22,
@@ -226,6 +227,7 @@ const Body kerbol_system_bodies[] =
                    .mean_anomaly_at_epoch = 3.14},
          .soi_radius = 10856518,
          .colour = 0xf9d8db},
+        // Bop
         {.body_id = BOP,
          .parent_id = JOOL,
          .mass = 3.7261090e19,
@@ -240,6 +242,7 @@ const Body kerbol_system_bodies[] =
                    .mean_anomaly_at_epoch = 0.9},
          .soi_radius = 1221060.9,
          .colour = 0x706a5c},
+        // Pol
         {.body_id = POL,
          .parent_id = JOOL,
          .mass = 1.0813507e19,
@@ -247,7 +250,7 @@ const Body kerbol_system_bodies[] =
          .radius = 44000,
          .atmosphere_height = 0,
          .orbit = {.semi_major_axis = 179890000,
-                   .eccentricity = 0.171,
+                   .eccentricity = 0.17085, // on the wiki, it's 0.171, but validation set says 0.17085
                    .inclination = RADIANS(4.25),
                    .longitude_of_ascending_node = RADIANS(2),
                    .argument_of_periapsis = RADIANS(15),

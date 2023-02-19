@@ -59,16 +59,51 @@ class KSPTime:
 
         # create string buffer to hold result
         buf = ffi.new('char[]', 100)
-        lib.get_ut_time_string(self.c_data, buf, 100)
+        lib.get_ut_time_string(self.c_data, buf, 100, False)
 
         return ffi.string(buf).decode('utf-8')
 
 
-def direct_ut_to_string(ut: float, time_type: TimeType) -> str:
+def interval_to_delta_string(
+        interval: float,
+        time_type: TimeType = TimeType.KERBIN_TIME) -> str:
+    '''
+    Convert a time interval in seconds into a formatted string.
+
+    Parameters
+    ----------
+    interval: float
+        time interval in seconds
+    time_type: TimeType
+        Kerbin time or Earth time
+    '''
+    # create string buffer to hold result
+    buf = ffi.new('char[]', 100)
+    lib.get_delta_time_string(lib.ksp_time_from_ut(interval, time_type),
+                              buf, 100)
+
+    return ffi.string(buf).decode('utf-8')
+
+
+def ut_to_ut_string(ut: float, time_type: TimeType = TimeType.KERBIN_TIME,
+                    day_only: bool = False) -> str:
+    '''
+    Convert a universal timestamp in seconds to a formatted string.
+
+    Parameters
+    ----------
+    ut: float
+        universal time in seconds
+    time_type: TimeType
+        Kerbin time or Earth time
+    day_only: bool
+        whether to print the full time string (e.g. Y1 D1 12:34:56 or just Y1 D1)
+    '''
     # For faster conversion
 
     # create string buffer to hold result
     buf = ffi.new('char[]', 100)
-    lib.get_ut_time_string(lib.ksp_time_from_ut(ut, time_type), buf, 100)
+    lib.get_ut_time_string(lib.ksp_time_from_ut(
+        ut, time_type), buf, 100, day_only)
 
     return ffi.string(buf).decode('utf-8')

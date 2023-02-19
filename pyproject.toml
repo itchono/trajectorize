@@ -37,7 +37,7 @@ dynamic = ["version"]
 homepage = "https://github.com/itchono/trajectorize"
 
 [tool.setuptools.packages.find]
-include = ["trajectorize"]
+include = ["trajectorize", "trajectorize.*"]
 where = ["src"]
 
 [tool.setuptools_scm]
