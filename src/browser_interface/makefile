@@ -3,18 +3,23 @@
 
 # define include directories
 INCLUDES = -I../../include
-SRCS = ../trajectorize/**/*.c browser_main.c
+SRCS = ../trajectorize/**/*.c
 
-# target
-trajectorize.js: browser_main.c
-	emcc -o trajectorize.js $(INCLUDES) $(SRCS)
+dist: trajectorize.js index.html
 # create dist folder
 	mkdir -p dist
 # copy files to dist folder
 	cp trajectorize.js dist
 	cp trajectorize.wasm dist
-	cp index.html dist
 	cp -r scripts dist/scripts
+	cp index.html dist
+
+# target
+trajectorize.js: browser_main.c
+	emcc -sEXPORTED_RUNTIME_METHODS=ccall,cwrap browser_main.c -o trajectorize.js $(INCLUDES) $(SRCS)
+
+index.html:
+# (placeholder)
 
 browser_main.c:
 # (placeholder)

@@ -271,3 +271,5 @@ const Body kerbol_system_bodies[] =
                    .mean_anomaly_at_epoch = 3.14},
          .soi_radius = 1.1908294e8,
          .colour = 0xa3aea9}};
+
+const char *body_names[] = {"Kerbol", "Moho", "Eve", "Kerbin", "Duna", "Dres", "Jool", "Laythe", "Vall", "Tylo", "Bop", "Pol", "Eeloo"};

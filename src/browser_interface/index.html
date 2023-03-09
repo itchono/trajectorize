@@ -35,10 +35,78 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <h2 class="fw-light">Orbit Display</h2>
+                <h2 class="fw-light">Transfer Calculator</h2>
+
+                
+
+                <form action="javascript:calculate_transfer();">
+                    <label for="origin_body">Origin Body</label>
+                    <select id="origin_body" name="origin_body">
+                        <option value="1">Moho</option>
+                        <option value="2">Eve</option>
+                        <option value="3">Gilly</option>
+                        <option value="4" selected>Kerbin</option>
+                        <option value="5">Mun</option>
+                        <option value="6">Minmus</option>
+                        <option value="7">Duna</option>
+                        <option value="8">Ike</option>
+                        <option value="9">Dres</option>
+                        <option value="10">Jool</option>
+                        <option value="11">Laythe</option>
+                        <option value="12">Vall</option>
+                        <option value="13">Tylo</option>
+                        <option value="14">Bop</option>
+                        <option value="15">Pol</option>
+                        <option value="16">Eeloo</option>
+                    </select>
+
+                    <label for="destination_body">Destination Body</label>
+                    <select id="destination_body" name="destination_body">
+                        <option value="1">Moho</option>
+                        <option value="2">Eve</option>
+                        <option value="3">Gilly</option>
+                        <option value="4">Kerbin</option>
+                        <option value="5">Mun</option>
+                        <option value="6">Minmus</option>
+                        <option value="7" selected>Duna</option>
+                        <option value="8">Ike</option>
+                        <option value="9">Dres</option>
+                        <option value="10">Jool</option>
+                        <option value="11">Laythe</option>
+                        <option value="12">Vall</option>
+                        <option value="13">Tylo</option>
+                        <option value="14">Bop</option>
+                        <option value="15">Pol</option>
+                        <option value="16">Eeloo</option>
+                    </select>
+
+                    <br>
+                    <label for="departure_time">Earliest Departure Time (UT) (s)</label>
+                    <input type="number" id="departure_time" name="departure_time" placeholder="0">
+
+                    <br>
+                    <label for="parking_orbit">Parking Orbit Altitude (m)</label>
+                    <input type="number" id="parking_orbit" name="parking_orbit" placeholder="75000">
+
+                    <br>
+                    <label for="include_capture">Include Capture Orbit</label>
+                    <input type="checkbox" id="include_capture" name="include_capture" value="include_capture">
+
+                    <br>
+                    <label for="capture_orbit">Capture Orbit Altitude (m)</label>
+                    <input type="number" id="capture_orbit" name="capture_orbit" placeholder="50000">
+
+                    <br>
+                    <input type="submit" value="Calculate">
+                </form>
+
+                
+
                 <div id="program-output"></div>
                 <script src="scripts/pre_init.js"></script>
                 <script src="trajectorize.js"></script>
+                <script src="scripts/transfer_calculator.js"></script>
+                
             </div>
         </div>
 
