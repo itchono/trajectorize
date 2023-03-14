@@ -88,6 +88,17 @@ double M_from_E(double E, double e);
 KeplerianElements ke_from_state_vector(StateVector state_vector, double mu);
 
 /**
+ * @brief Convert a set of Keplerian elements to a state vector, evaluated
+ * at a specific true anomaly.
+ *
+ * @param orbit
+ * @param mu standard gravitational parameter of the parent body (GM) in m^3/s^2
+ * @param theta
+ * @return StateVector
+ */
+StateVector state_vector_at_true_anomaly(KeplerianElements orbit, double mu, double theta);
+
+/**
  * @brief Convert a set of Keplerian elements to a state vector
  * the orbit is provided at a specific instant in time.
  *
@@ -141,5 +152,14 @@ StateVectorArray ke_orbit_prop_many(int n, double times[], KeplerianElements orb
  * @return KeplerianElements
  */
 KeplerianElements fit_hyperbolic_trajectory(Vector3 v_inf, double r_pe, double mu);
+
+/**
+ * @brief Returns the state vector of a hyperbolic orbit at 99% of infinity
+ *
+ * @param orbit
+ * @param mu
+ * @return StateVector
+ */
+StateVector ke_hyperbolic_at_infinity(KeplerianElements orbit, double mu);
 
 #endif // CONIC_KEPLER_H

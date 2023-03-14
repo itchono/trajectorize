@@ -103,15 +103,18 @@ KeplerianElements ke_orbit_prop(double t, KeplerianElements orbit, double mu)
     return orbit_propagated;
 }
 
-StateVector state_vector_from_ke(KeplerianElements orbit, double mu)
+StateVector state_vector_at_true_anomaly(KeplerianElements orbit, double mu, double theta)
 {
-    double r = orbit.semi_major_axis * (1 - orbit.eccentricity * orbit.eccentricity) / (1 + orbit.eccentricity * cos(orbit.true_anomaly));
-    double x = r * cos(orbit.true_anomaly);
-    double y = r * sin(orbit.true_anomaly);
+    double r = orbit.semi_major_axis * (1 - orbit.eccentricity * orbit.eccentricity) / (1 + orbit.eccentricity * cos(theta));
+    if (orbit.semi_major_axis < 0)
+        r = -r; // hyperbolic orbit (r is negative)
+
+    double x = r * cos(theta);
+    double y = r * sin(theta);
 
     double h = sqrt(mu * orbit.semi_major_axis * (1 - orbit.eccentricity * orbit.eccentricity));
-    double vx = -mu / h * sin(orbit.true_anomaly);
-    double vy = mu / h * (orbit.eccentricity + cos(orbit.true_anomaly));
+    double vx = -mu / h * sin(theta);
+    double vy = mu / h * (orbit.eccentricity + cos(theta));
 
     Vector3 perifocal_position = {.v = {x, y, 0}};
     Vector3 perifocal_velocity = {.v = {vx, vy, 0}};
@@ -127,6 +130,11 @@ StateVector state_vector_from_ke(KeplerianElements orbit, double mu)
         orbit.epoch};
 
     return state_vector;
+}
+
+StateVector state_vector_from_ke(KeplerianElements orbit, double mu)
+{
+    return state_vector_at_true_anomaly(orbit, mu, orbit.true_anomaly);
 }
 
 StateVectorArray ke_state_locus(KeplerianElements orbit, double mu, int n)
@@ -220,6 +228,12 @@ KeplerianElements ke_from_state_vector(StateVector state_vector, double mu)
     Vector3 e_vec = {.v = {e_vec_x, e_vec_y, e_vec_z}};
     double e = vec_norm(e_vec);
 
+    // correct for hyperbolic orbits
+    if (e > 1)
+    {
+        a = -a;
+    }
+
     // compute inclination
     double n_vec_x = -h.y;
     double n_vec_y = h.x;
@@ -305,7 +319,8 @@ KeplerianElements fit_hyperbolic_trajectory(Vector3 v_inf,
     // i.e. we reach the asymptote at the same time as the ascending node
     double aop = -theta_infinity;
 
-    double sma = h * h / (mu * (e * e - 1));
+    double sma = -h * h / (mu * (e * e - 1));
+    // negative semi-major axis means hyperbolic orbit
 
     KeplerianElements orbit = {
         .semi_major_axis = sma,
@@ -317,4 +332,12 @@ KeplerianElements fit_hyperbolic_trajectory(Vector3 v_inf,
         .epoch = 0};
 
     return orbit;
+}
+
+StateVector ke_hyperbolic_at_infinity(KeplerianElements orbit, double mu)
+{
+    // Compute asymptote angle
+    double theta_infinity = acos(-1 / orbit.eccentricity) * 0.9999999;
+
+    return state_vector_at_true_anomaly(orbit, theta_infinity, mu);
 }
